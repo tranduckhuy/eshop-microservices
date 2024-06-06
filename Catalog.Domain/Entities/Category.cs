@@ -2,7 +2,7 @@
 
 namespace Catalog.Domain.Entities
 {
-    public class ProductType
+    public class Category
     {
         [BsonElement("Name")]
         public string Name {  get; set; } = string.Empty;

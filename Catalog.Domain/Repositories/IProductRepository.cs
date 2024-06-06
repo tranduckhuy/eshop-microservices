@@ -2,7 +2,7 @@
 
 namespace Catalog.Domain.Repositories
 {
-    public interface IProducRepository
+    public interface IProductRepository
     {
         Task<IEnumerable<Product>> GetAll();
         Task<Product> GetById(Guid id);

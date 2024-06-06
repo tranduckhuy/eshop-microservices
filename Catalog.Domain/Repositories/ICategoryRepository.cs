@@ -2,8 +2,8 @@
 
 namespace Catalog.Domain.Repositories
 {
-    public interface ITypeRepository
+    public interface ICategoryRepository
     {
-        Task<IEnumerable<ProductType>> GetAll();
+        Task<IEnumerable<Category>> GetAll();
     }
 }
