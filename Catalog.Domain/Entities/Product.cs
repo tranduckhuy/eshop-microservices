@@ -11,8 +11,8 @@ namespace Catalog.Domain.Entities
         public string Summary { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string ImageFile { get; set; } = string.Empty;
-        public Brand? Brands { get; set; } 
-        public Category? Types { get; set; }
+        public Brand? Brand { get; set; } 
+        public Category? Category { get; set; }
 
         [BsonRepresentation(BsonType.Int32)]
         public int Quantity { get; set; }

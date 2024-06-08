@@ -6,10 +6,10 @@ namespace Catalog.Infrastructure.Data
 {
     public class ProductContextSeed
     {
-        public static void SeedData(IMongoCollection<Product> productCollection)
+        public static void SeedData(IMongoCollection<Product> productsCollection)
         {
             // Check if there is already data in the collection
-            bool existProduct = productCollection.Find(p => true).Any();
+            bool existProduct = productsCollection.Find(_ => true).Any();
 
             if (!existProduct)
             {
@@ -19,7 +19,7 @@ namespace Catalog.Infrastructure.Data
 
                 if (products != null)
                 {
-                    productCollection.InsertManyAsync(products);
+                    productsCollection.InsertManyAsync(products);
                 }
             }
         }

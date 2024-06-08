@@ -8,6 +8,7 @@ namespace Catalog.Domain.Repositories
         Task<Product> GetById(Guid id);
         Task<IEnumerable<Product>> GetByName(string name);
         Task<IEnumerable<Product>> GetByBrand(string brand);
+        Task<IEnumerable<Product>> GetByCategory(string category);
         Task<Product> Create(Product product);
         Task<bool> Update(Product product);
         Task<bool> DeleteById(Guid id);

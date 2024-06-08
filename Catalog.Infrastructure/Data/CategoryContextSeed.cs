@@ -6,10 +6,10 @@ namespace Catalog.Infrastructure.Data
 {
     public static class CategoryContextSeed
     {
-        public static void SeedData(IMongoCollection<Category> categoryCollection)
+        public static void SeedData(IMongoCollection<Category> categoriesCollection)
         {
             // Check if there is already data in the collection
-            bool existCategory = categoryCollection.Find(p => true).Any();
+            bool existCategory = categoriesCollection.Find(_ => true).Any();
 
             if (!existCategory)
             {
@@ -19,7 +19,7 @@ namespace Catalog.Infrastructure.Data
 
                 if (categories != null)
                 {
-                    categoryCollection.InsertManyAsync(categories);
+                    categoriesCollection.InsertManyAsync(categories);
                 }
             }
         }

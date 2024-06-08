@@ -6,10 +6,10 @@ namespace Catalog.Infrastructure.Data
 {
     public static class BrandContextSeed
     {
-        public static void SeedData(IMongoCollection<Brand> brandCollection)
+        public static void SeedData(IMongoCollection<Brand> brandsCollection)
         {
             // Check if there is already data in the collection
-            bool existBrand = brandCollection.Find(p => true).Any();
+            bool existBrand = brandsCollection.Find(_ => true).Any();
 
             if (!existBrand)
             {
@@ -19,7 +19,7 @@ namespace Catalog.Infrastructure.Data
 
                 if (brands != null)
                 {
-                    brandCollection.InsertManyAsync(brands);
+                    brandsCollection.InsertManyAsync(brands);
                 }
             }
         }

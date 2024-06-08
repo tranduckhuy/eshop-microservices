@@ -19,11 +19,11 @@ namespace Catalog.Infrastructure.Data
             var database = client.GetDatabase(configuration.GetValue<string>("DatabaseSettings:DatabaseName"));
 
             Brands = database.GetCollection<Brand>(
-                configuration.GetValue<string>("DatabaseSettings:BrandCollection"));
+                configuration.GetValue<string>("DatabaseSettings:BrandsCollection"));
             Categories = database.GetCollection<Category>(
-                configuration.GetValue<string>("DatabaseSettings:CategoryCollection"));
+                configuration.GetValue<string>("DatabaseSettings:CategoriesCollection"));
             Products = database.GetCollection<Product>(
-                configuration.GetValue<string>("DatabaseSettings:ProductCollection"));
+                configuration.GetValue<string>("DatabaseSettings:ProductsCollection"));
 
             // Seed data
             BrandContextSeed.SeedData(Brands);
