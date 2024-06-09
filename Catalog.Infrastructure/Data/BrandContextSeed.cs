@@ -13,7 +13,7 @@ namespace Catalog.Infrastructure.Data
 
             if (!existBrand)
             {
-                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "SeedData", "brands.js");
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "SeedData", "brands.json");
                 var brandsData = File.ReadAllText(path);
                 var brands = JsonSerializer.Deserialize<List<Brand>>(brandsData);
 

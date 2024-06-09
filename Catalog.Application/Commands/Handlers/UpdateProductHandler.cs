@@ -24,11 +24,6 @@ namespace Catalog.Application.Commands.Handlers
 
         public async Task<bool> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
-            if (request == null)
-            {
-                throw new UpdateProductException($"The product to be updated cannot have a null value!");
-            }
-
             var brandTask = _brandRepository.GetById(request.BrandId);
             var categoryTask = _categoryRepository.GetById(request.CategoryId);
             var productTask = _productRepository.GetById(request.Id);
@@ -39,18 +34,11 @@ namespace Catalog.Application.Commands.Handlers
             var category = await categoryTask ?? throw new CategoryNotFoundException(request.CategoryId);
             _ = await productTask ?? throw new ProductNotFoundException($"Id '{request.Id}'");
 
-            try
-            {
-                var productEntity = CatalogMapper.Mapper.Map<Product>(request);
-                productEntity.Brand = brand;
-                productEntity.Category = category;
+            var productEntity = CatalogMapper.Mapper.Map<Product>(request);
+            productEntity.Brand = brand;
+            productEntity.Category = category;
 
-                return await _productRepository.Update(productEntity);
-            }
-            catch (Exception ex)
-            {
-                throw new UpdateProductException(ex.Message);
-            }
+            return await _productRepository.Update(productEntity);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Catalog.Application.Queries.Handlers
         {
             var products = await _productRepository.GetByName(request.Name);
 
-            if (products is not null)
+            if (products.Any())
             {
                 return CatalogMapper.Mapper.Map<IEnumerable<Product>, IEnumerable<ProductResponse>>(products);
             }

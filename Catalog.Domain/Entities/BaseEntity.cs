@@ -5,7 +5,7 @@ namespace Catalog.Domain.Entitys
 {
     public abstract class BaseEntity
     {
-        [BsonGuidRepresentation(GuidRepresentation.Standard)]
+        [BsonId]
         public Guid Id { get; set; } = Guid.NewGuid();
     }
 }

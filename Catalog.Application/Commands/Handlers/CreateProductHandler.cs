@@ -25,28 +25,16 @@ namespace Catalog.Application.Commands.Handlers
 
         public async Task<ProductResponse> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            if (request is null)
-            {
-                throw new CreateProductException(nameof(request));
-            }
-
             var brand = await _brandRepository.GetById(request.BrandId) ?? throw new BrandNotFoundException(request.BrandId);
             var category = await _categoryRepository.GetById(request.CategoryId) ?? throw new CategoryNotFoundException(request.CategoryId);
 
-            try
-            {
-                var productEntity = CatalogMapper.Mapper.Map<Product>(request);
-                productEntity.Brand = brand;
-                productEntity.Category = category;
+            var productEntity = CatalogMapper.Mapper.Map<Product>(request);
+            productEntity.Brand = brand;
+            productEntity.Category = category;
 
-                var newProduct = await _productRepository.Create(productEntity);
-                var productResponse = CatalogMapper.Mapper.Map<ProductResponse>(newProduct);
-                return productResponse;
-            }
-            catch (Exception ex)
-            {
-                throw new CreateProductException(ex.Message);
-            }
+            var newProduct = await _productRepository.Create(productEntity);
+            var productResponse = CatalogMapper.Mapper.Map<ProductResponse>(newProduct);
+            return productResponse;
         }
     }
 }
