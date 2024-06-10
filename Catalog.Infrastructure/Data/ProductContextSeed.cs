@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace Catalog.Infrastructure.Data
 {
-    public class ProductContextSeed
+    public static class ProductContextSeed
     {
         public static void SeedData(IMongoCollection<Product> productsCollection)
         {
