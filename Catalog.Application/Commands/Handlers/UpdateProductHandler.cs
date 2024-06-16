@@ -30,9 +30,9 @@ namespace Catalog.Application.Commands.Handlers
 
             await Task.WhenAll(brandTask, categoryTask, productTask);
 
+            _ = await productTask ?? throw new ProductNotFoundException($"Id '{request.Id}'");
             var brand = await brandTask ?? throw new BrandNotFoundException(request.BrandId);
             var category = await categoryTask ?? throw new CategoryNotFoundException(request.CategoryId);
-            _ = await productTask ?? throw new ProductNotFoundException($"Id '{request.Id}'");
 
             var productEntity = CatalogMapper.Mapper.Map<Product>(request);
             productEntity.Brand = brand;

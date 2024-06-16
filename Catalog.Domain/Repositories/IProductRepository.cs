@@ -6,7 +6,7 @@ namespace Catalog.Domain.Repositories
     public interface IProductRepository
     {
         Task<Pagination<Product>> GetProducts(CatalogSpecParams catalogSpecParams);
-        Task<Product> GetById(Guid id);
+        Task<Product?> GetById(Guid id);
         Task<IEnumerable<Product>> GetByName(string name);
         Task<IEnumerable<Product>> GetByBrand(string brand);
         Task<IEnumerable<Product>> GetByCategory(string category);

@@ -111,7 +111,7 @@ namespace Catalog.Infrastructure.Repositories
             return await _context.Products.Find(filter).ToListAsync();
         }
 
-        public async Task<Product> GetById(Guid id)
+        public async Task<Product?> GetById(Guid id)
         {
             return await _context.Products.Find(p => p.Id == id).FirstOrDefaultAsync();
         }

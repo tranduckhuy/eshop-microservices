@@ -14,7 +14,7 @@ namespace Catalog.Infrastructure
             services.AddHealthChecks()
                 .AddMongoDb(
                     configuration["DatabaseSettings:ConnectionString"]
-                                ?? throw new InvalidDataException("The MongoDB connection string is missing in the configuration. Please provide a valid connection string."),                    configuration["DatabaseSettings:ConnectionString"]
+                                ?? throw new InvalidDataException("The MongoDB connection string is missing in the configuration. Please provide a valid connection string."),
                     name: "Catalog MongoDB Health Check",
                     HealthStatus.Degraded);
 
