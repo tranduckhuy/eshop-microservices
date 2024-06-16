@@ -1,4 +1,4 @@
-﻿using Catalog.Application.Commands;
+using Catalog.Application.Commands;
 using Catalog.Application.Commands.Handlers;
 using Catalog.Application.Exceptions;
 using Catalog.Domain.Entities;
@@ -8,6 +8,7 @@ using Moq;
 
 namespace Application
 {
+    [TestFixture]
     public class UnitCommandsTests
     {
         private Mock<IProductRepository> _productRepositoryMock;
@@ -128,9 +129,11 @@ namespace Application
                 _brandRepositoryMock.Object
             );
 
-            // Act & Assert
-            Func<Task> act = () => handler.Handle(command, CancellationToken.None);
-            await act.Should().NotThrowAsync();
+            // Act
+            await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            _productRepositoryMock.Verify(repo => repo.Create(It.IsAny<Product>()), Times.Once);
         }
         #endregion
 
@@ -256,3 +259,4 @@ namespace Application
         #endregion
     }
 }
+
