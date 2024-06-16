@@ -1,4 +1,4 @@
-﻿using Catalog.Application.Commands;
+using Catalog.Application.Commands;
 using Catalog.Application.Commands.Handlers;
 using Catalog.Application.Exceptions;
 using Catalog.Domain.Entities;
