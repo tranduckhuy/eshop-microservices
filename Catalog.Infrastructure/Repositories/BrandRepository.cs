@@ -12,7 +12,7 @@ namespace Catalog.Infrastructure.Repositories
         public async Task<IEnumerable<Brand>> GetAll()
             => await _context.Brands.Find(_ => true).ToListAsync();
 
-        public async Task<Brand> GetById(Guid Id)
+        public async Task<Brand?> GetById(Guid Id)
         {
             FilterDefinition<Brand> filter = Builders<Brand>.Filter.Eq(b => b.Id, Id);
             return await _context.Brands.Find(filter).FirstOrDefaultAsync();
