@@ -46,6 +46,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"tranduckhuy_eshop-microservices" /o:"tranduckhuy" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"tranduckhuy_eshop-microservices" /o:"tranduckhuy" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="tests/Services/Catalog/Catalog.Application.Test/coverage.opencover.xml,tests/Services/Catalog/Catalog.Infrastructure.Test/coverage.opencover.xml" /d:sonar.coverage.exclusions="src/Services/Catalog/Catalog.Infrastructure/Data/**/*"
           dotnet build EShop.sln --configuration Debug
+          dotnet test tests\Services\Catalog\Catalog.Application.Test\Catalog.Application.Test.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          dotnet test tests\Services\Catalog\Catalog.Infrastructure.Test\Catalog.Infrastructure.Test.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
