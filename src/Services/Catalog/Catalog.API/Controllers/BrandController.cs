@@ -13,8 +13,9 @@ namespace Catalog.API.Controllers
 
         [HttpGet]
         [Route("GetAllProducts")]
-        public async Task<IActionResult> GetAllBrands([FromQuery] GetAllBrandsQuery query)
+        public async Task<IActionResult> GetAllBrands()
         {
+            var query = new GetAllBrandsQuery();
             return await ExecuteAsync<GetAllBrandsQuery, IEnumerable<BrandResponse>>(query);
         }
     }

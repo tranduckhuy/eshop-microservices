@@ -13,8 +13,9 @@ namespace Catalog.API.Controllers
 
         [HttpGet]
         [Route("GetAllCategories")]
-        public async Task<IActionResult> GetAllCategories([FromQuery] GetAllCategoriesQuery query)
+        public async Task<IActionResult> GetAllCategories()
         {
+            var query = new GetAllCategoriesQuery();
             return await ExecuteAsync<GetAllCategoriesQuery, IEnumerable<CategoryResponse>>(query);
         }
     }
