@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
 
-namespace Catalog.Application.Mappers
+namespace Basket.Application.Mappers
 {
-    public static class CatalogMapper
+    public static class BasketMapper
     {
-        private static readonly Lazy<IMapper> _lazy = new Lazy<IMapper>(() =>
+        private readonly static Lazy<IMapper> _lazy = new Lazy<IMapper>(() =>
         {
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.ShouldMapProperty = p => p.GetMethod?.IsPublic == true || p.GetMethod?.IsAssembly == true;
-                cfg.AddProfile<CatalogMappingProfiles>();
+                cfg.AddProfile<BasketMappingProfile>();
             });
 
             return config.CreateMapper();

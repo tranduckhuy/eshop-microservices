@@ -6,7 +6,8 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     branches:
-      - main
+      - master
+      - dev
       - feature/*
 jobs:
   build:

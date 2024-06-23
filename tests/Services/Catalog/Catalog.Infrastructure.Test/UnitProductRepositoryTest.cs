@@ -65,10 +65,13 @@ namespace Catalog.Infrastructure.Tests
             // Act
             var result = await _productRepository.GetProducts(catalogSpecParams);
 
-            // Assert
-            Assert.That(result.Data, Is.EqualTo(products));
-            // Additional assertions for PageSize behavior
-            Assert.That(catalogSpecParams.PageSize, Is.EqualTo(Math.Min(pageSize, CatalogSpecParams.MaxPageSize)), "PageSize should be capped correctly");
+            Assert.Multiple(() =>
+            {
+                // Assert
+                Assert.That(result.Data, Is.EqualTo(products));
+                // Additional assertions for PageSize behavior
+                Assert.That(catalogSpecParams.PageSize, Is.EqualTo(Math.Min(pageSize, CatalogSpecParams.MaxPageSize)), "PageSize should be capped correctly");
+            });
         }
 
         [Test]
@@ -114,7 +117,7 @@ namespace Catalog.Infrastructure.Tests
             var result = await _productRepository.DeleteById(id);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
         }
 
 

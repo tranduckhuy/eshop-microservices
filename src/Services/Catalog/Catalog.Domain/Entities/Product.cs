@@ -1,6 +1,6 @@
 ﻿using Catalog.Domain.Entitys;
-using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Catalog.Domain.Entities
 {

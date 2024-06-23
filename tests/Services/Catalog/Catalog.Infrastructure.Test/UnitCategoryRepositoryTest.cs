@@ -43,8 +43,11 @@ namespace Catalog.Infrastructure.Test
         public async Task GetAll_ShouldReturnAllCategories()
         {
             var result = await _repository.GetAll();
-            Assert.That(result.Count(), Is.EqualTo(2));
-            Assert.That(result.First().Name, Is.EqualTo("Category1"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Count(), Is.EqualTo(2));
+                Assert.That(result.First().Name, Is.EqualTo("Category1"));
+            });
         }
 
         [Test]

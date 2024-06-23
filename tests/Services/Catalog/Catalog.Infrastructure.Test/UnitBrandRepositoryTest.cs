@@ -42,8 +42,11 @@ namespace Catalog.Infrastructure.Test
         public async Task GetAll_ShouldReturnAllBrands()
         {
             var result = await _repository.GetAll();
-            Assert.That(result.Count(), Is.EqualTo(2));
-            Assert.That(result.First().Name, Is.EqualTo("Brand1"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Count(), Is.EqualTo(2));
+                Assert.That(result.First().Name, Is.EqualTo("Brand1"));
+            });
         }
 
         [Test]

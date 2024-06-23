@@ -185,9 +185,12 @@ namespace Catalog.API.Tests.Controllers
 
             var apiResponse = objectResult.Value as ApiResponse<IEnumerable<ProductResponse>>;
             Assert.That(apiResponse, Is.Not.Null);
-            Assert.That(apiResponse.IsSuccess, Is.False);
-            Assert.That(apiResponse.Details, Is.EqualTo($"Product with name '{name}' was not found."));
-            Assert.That(apiResponse.Data, Is.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(apiResponse.IsSuccess, Is.False);
+                Assert.That(apiResponse.Details, Is.EqualTo($"Product with name '{name}' was not found."));
+                Assert.That(apiResponse.Data, Is.Null);
+            });
         }
 
         [Test]
@@ -209,9 +212,12 @@ namespace Catalog.API.Tests.Controllers
 
             var apiResponse = badRequestResult.Value as ApiResponse<GetProductByNameQuery>;
             Assert.That(apiResponse, Is.Not.Null);
-            Assert.That(apiResponse.IsSuccess, Is.False);
-            Assert.That(apiResponse.Message, Is.EqualTo("Invalid request"));
-            Assert.That(apiResponse.Errors, Is.Not.Null); // Ensure ModelState errors are captured
+            Assert.Multiple(() =>
+            {
+                Assert.That(apiResponse.IsSuccess, Is.False);
+                Assert.That(apiResponse.Message, Is.EqualTo("Invalid request"));
+                Assert.That(apiResponse.Errors, Is.Not.Null); // Ensure ModelState errors are captured
+            });
         }
 
         [Test]
@@ -227,8 +233,11 @@ namespace Catalog.API.Tests.Controllers
 
             var apiResponse = badRequestResult.Value as ApiResponse<ProductResponse>;
             Assert.That(apiResponse, Is.Not.Null);
-            Assert.That(apiResponse.IsSuccess, Is.False);
-            Assert.That(apiResponse.Message, Is.EqualTo("Request cannot be null!"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(apiResponse.IsSuccess, Is.False);
+                Assert.That(apiResponse.Message, Is.EqualTo("Request cannot be null!"));
+            });
         }
 
         protected static CreateProductCommand CreateValidCreateProductCommand()
