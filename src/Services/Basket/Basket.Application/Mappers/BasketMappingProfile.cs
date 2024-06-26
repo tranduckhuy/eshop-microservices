@@ -8,8 +8,8 @@ namespace Basket.Application.Mappers
     {
         public BasketMappingProfile()
         {
-            CreateMap<ShoppingCart, ShoppingCartResponse>().ReverseMap();
-            CreateMap<ShoppingCartItem, ShoppingCartItemResponse>().ReverseMap();
+            CreateMap<ShoppingCart, BasketResponse>().ReverseMap();
+            CreateMap<ShoppingCartItem, BasketItemResponse>().ReverseMap();
         }
     }
 }

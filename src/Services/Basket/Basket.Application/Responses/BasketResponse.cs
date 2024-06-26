@@ -1,9 +1,9 @@
 ﻿namespace Basket.Application.Responses
 {
-    public class ShoppingCartResponse
+    public class BasketResponse
     {
         public string UserName { get; set; } = string.Empty;
-        public List<ShoppingCartItemResponse> Items { get; set; } = [];
+        public List<BasketItemResponse> Items { get; set; } = [];
         public decimal TotalPrice
         {
             get

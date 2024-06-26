@@ -25,7 +25,7 @@ namespace Basket.Infrastructure.Repositories
             return false;
         }
 
-        public async Task<ShoppingCart?> GetBasket(string userName)
+        public async Task<Domain.Entities.ShoppingCart?> GetBasket(string userName)
         {
             var basket = await _redisCache.GetStringAsync(userName);
             if (string.IsNullOrEmpty(basket))
@@ -35,7 +35,7 @@ namespace Basket.Infrastructure.Repositories
             return JsonConvert.DeserializeObject<ShoppingCart>(basket);
         }
 
-        public async Task<ShoppingCart?> UpdateBasket(ShoppingCart shoppingCart)
+        public async Task<Domain.Entities.ShoppingCart?> UpdateBasket(Domain.Entities.ShoppingCart shoppingCart)
         {
             await _redisCache.SetStringAsync(shoppingCart.UserName, JsonConvert.SerializeObject(shoppingCart));
             return await GetBasket(shoppingCart.UserName);

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Basket.Application.Queries
 {
-    public class GetBasketByUserNameQuery(string userName) : IRequest<ShoppingCartResponse>
+    public class GetBasketByUserNameQuery(string userName) : IRequest<BasketResponse>
     {
         public string UserName { get; set; } = userName;
     }

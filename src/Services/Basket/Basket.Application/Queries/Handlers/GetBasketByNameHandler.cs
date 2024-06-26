@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Basket.Application.Queries.Handlers
 {
-    public class GetBasketByNameHandler : IRequestHandler<GetBasketByUserNameQuery, ShoppingCartResponse>
+    public class GetBasketByNameHandler : IRequestHandler<GetBasketByUserNameQuery, BasketResponse>
     {
         private readonly IBasketRepository _repository;
 
@@ -16,14 +16,14 @@ namespace Basket.Application.Queries.Handlers
             _repository = repository;
         }
 
-        public async Task<ShoppingCartResponse> Handle(GetBasketByUserNameQuery request, CancellationToken cancellationToken)
+        public async Task<BasketResponse> Handle(GetBasketByUserNameQuery request, CancellationToken cancellationToken)
         {
             var basket = await _repository.GetBasket(request.UserName);
             if (basket != null)
             {
-                return BasketMapper.Mapper.Map<ShoppingCart, ShoppingCartResponse>(basket);
+                return BasketMapper.Mapper.Map<ShoppingCart, BasketResponse>(basket);
             }
-            throw new BasketNotFoundException(request.UserName);
+            throw new BasketNotFoundException(request.UserName);    
         }
     }
 }

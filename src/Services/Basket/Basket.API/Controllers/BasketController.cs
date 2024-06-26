@@ -17,14 +17,14 @@ namespace Basket.API.Controllers
         public async Task<IActionResult> GetBasket(string userName)
         {
             var query = new GetBasketByUserNameQuery(userName);
-            return await ExecuteAsync<GetBasketByUserNameQuery, ShoppingCartResponse>(query);
+            return await ExecuteAsync<GetBasketByUserNameQuery, BasketResponse>(query);
         }
 
         [HttpPost]
         [Route("[action]")]
-        public async Task<IActionResult> UpdateBasket([FromBody] CreateShoppingCartCommand command)
+        public async Task<IActionResult> UpdateBasket([FromBody] CreateBasketCommand command)
         {
-            return await ExecuteAsync<CreateShoppingCartCommand, ShoppingCartResponse>(command);
+            return await ExecuteAsync<CreateBasketCommand, BasketResponse>(command);
         }
 
         [HttpDelete]
