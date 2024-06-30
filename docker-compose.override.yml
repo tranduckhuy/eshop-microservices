@@ -13,6 +13,18 @@ services:
     ports:
       - "6379:6379"
 
+  discountdb:
+    container_name: discountdb
+    evnironment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=huydz
+      - POSTGRES_DB=DiscountDb
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   portainer:
     container_name: portainer
     restart: always
@@ -49,3 +61,14 @@ services:
       - basketdb
     ports:
       - "9001:8080"
+
+  discount.api:
+    container_name: discount.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings__ConnectionString=Host=discountdb;Port=5432;Database=DiscountDb;Username=admin;Password=huydz"
+      - "EventBusSettings__HostAddress=http://rabbitmq:15672"
+    depends_on:
+      - discountdb
+    ports:
+      - "9002:8080"
