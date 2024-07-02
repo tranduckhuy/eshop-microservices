@@ -28,5 +28,5 @@ namespace Discount.Application.Commands.Handlers
             }
             throw new CreateDiscountException(coupon.ProductName);
         }
-    }
+    }   
 }

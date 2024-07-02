@@ -32,9 +32,9 @@ namespace Discount.API.Services
                 Amount: request.Coupon.Amount
            );
 
-            await _mediator.Send(coupon);
+            var result = await _mediator.Send(coupon);
             _logger.LogInformation("Discount is successfully created. ProductName : {ProductName}", coupon.ProductName);
-            return request.Coupon;
+            return result;
         }
 
         public override async Task<DeleteDiscountResponse> DeleteDiscount(DeleteDiscountRequest request, ServerCallContext context)
