@@ -10,7 +10,7 @@ namespace Discount.Application.Mapper
         public DiscountProfile()
         {
             CreateMap<Coupon, CouponModel>().ReverseMap();
-            CreateMap<Coupon, CreateDiscountCommand>().ReverseMap();
+            CreateMap<CreateDiscountCommand, Coupon>().ReverseMap();
             CreateMap<Coupon, UpdateDiscountCommand>().ReverseMap();
         }
     }

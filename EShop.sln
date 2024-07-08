@@ -53,6 +53,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Discount.Application", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Discount.Infrastructure", "src\Services\Discount\Discount.Infrastructure\Discount.Infrastructure.csproj", "{140BDF1A-1D41-4806-946F-939F1540ACC1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Discount", "Discount", "{53CC1E72-72B6-46E8-9173-176AF076E42E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discount.Application.Test", "tests\Services\Discount\Discount.Application.Test\Discount.Application.Test.csproj", "{98213083-9D57-4473-889C-4FA7AD990A67}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +127,10 @@ Global
 		{140BDF1A-1D41-4806-946F-939F1540ACC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{140BDF1A-1D41-4806-946F-939F1540ACC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{140BDF1A-1D41-4806-946F-939F1540ACC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98213083-9D57-4473-889C-4FA7AD990A67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98213083-9D57-4473-889C-4FA7AD990A67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98213083-9D57-4473-889C-4FA7AD990A67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98213083-9D57-4473-889C-4FA7AD990A67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -151,6 +159,8 @@ Global
 		{0980FAB7-6B97-441A-99FA-D69B679C3055} = {9A4BCD83-F0A1-435E-812C-5C4C2742E2DC}
 		{72712731-7DBC-4065-AD75-FEEEADBABA73} = {9A4BCD83-F0A1-435E-812C-5C4C2742E2DC}
 		{140BDF1A-1D41-4806-946F-939F1540ACC1} = {9A4BCD83-F0A1-435E-812C-5C4C2742E2DC}
+		{53CC1E72-72B6-46E8-9173-176AF076E42E} = {5E8277F1-230F-4463-B015-66ED9BD7961D}
+		{98213083-9D57-4473-889C-4FA7AD990A67} = {53CC1E72-72B6-46E8-9173-176AF076E42E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {85BCE768-5965-4318-9398-F155701DD968}

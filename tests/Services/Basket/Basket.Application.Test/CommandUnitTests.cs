@@ -1,8 +1,11 @@
 using Basket.Application.Commands;
 using Basket.Application.Commands.Handlers;
 using Basket.Application.Exceptions;
+using Basket.Application.GrpcServices;
 using Basket.Domain.Entities;
 using Basket.Domain.Repositories;
+using Discount.Grpc.Protos;
+using Grpc.Core;
 using Moq;
 
 namespace Basket.Application.Test;
@@ -11,51 +14,100 @@ namespace Basket.Application.Test;
 public class CommandUnitTests
 {
     private Mock<IBasketRepository> _mockBasketRepository;
-    private CreateBasketHandler _createBasketCommandHandler;
+    private Mock<DiscountProtoService.DiscountProtoServiceClient> _discountProtoServiceClientMock;
+    private DiscountGrpcService _discountGrpcService;
+    private CreateBasketHandler _createBasketHandler;
     private DeleteBasketByUserNameHandler _deleteBasketCommandHandler;
 
     [SetUp]
-    public void Setup()
+    public void SetUp()
     {
         _mockBasketRepository = new Mock<IBasketRepository>();
-        _createBasketCommandHandler = new CreateBasketHandler(_mockBasketRepository.Object);
+        _discountProtoServiceClientMock = new Mock<DiscountProtoService.DiscountProtoServiceClient>();
+        _discountGrpcService = new DiscountGrpcService(_discountProtoServiceClientMock.Object);
+        _createBasketHandler = new CreateBasketHandler(_mockBasketRepository.Object, _discountGrpcService);
         _deleteBasketCommandHandler = new DeleteBasketByUserNameHandler(_mockBasketRepository.Object);
     }
 
-    #region CreateShoppingCartCommand
+    private AsyncUnaryCall<CouponModel> CreateAsyncUnaryCall(CouponModel response)
+    {
+        var tcs = new TaskCompletionSource<CouponModel>();
+        tcs.SetResult(response);
+        return new AsyncUnaryCall<CouponModel>(
+            tcs.Task,
+            Task.FromResult(new Metadata()),
+            () => Status.DefaultSuccess,
+            () => new Metadata(),
+            () => { });
+    }
 
+    #region CreateBasketCommand
     [Test]
-    public async Task Handle_ShouldCreateCart_WhenAllValidationsPass()
+    public async Task Handle_WithValidCommand_ReturnsBasketResponse()
     {
         // Arrange
         var command = new CreateBasketCommand
         {
-            UserName = "user1",
+            UserName = "testuser",
             Items = new List<ShoppingCartItem>
             {
-                new ShoppingCartItem { ProductId = Guid.NewGuid(), ProductName = "Product 1", ImageFile = "img1", Quantity = 1, Price = 123 },
-                new ShoppingCartItem { ProductId = Guid.NewGuid(), ProductName = "Product 2", ImageFile = "img2", Quantity = 2, Price = 456 }
+                new ShoppingCartItem { ProductName = "Product1", Price = 100 },
+                new ShoppingCartItem { ProductName = "Product2", Price = 200 }
             }
         };
 
-        _mockBasketRepository.Setup(x => x.UpdateBasket(It.IsAny<ShoppingCart>())).ReturnsAsync(new ShoppingCart
+        var coupon1 = new CouponModel { ProductName = "Product1", Amount = 10 };
+        var coupon2 = new CouponModel { ProductName = "Product2", Amount = 20 };
+
+        _discountProtoServiceClientMock
+            .Setup(client => client.GetDiscountAsync(
+                It.Is<GetDiscountRequest>(r => r.ProductName == "Product1"),
+                null, null, default))
+            .Returns(CreateAsyncUnaryCall(coupon1));
+
+        _discountProtoServiceClientMock
+            .Setup(client => client.GetDiscountAsync(
+                It.Is<GetDiscountRequest>(r => r.ProductName == "Product2"),
+                null, null, default))
+            .Returns(CreateAsyncUnaryCall(coupon2));
+
+        var updatedShoppingCart = new ShoppingCart
         {
             UserName = command.UserName,
-            Items = command.Items
-        });
+            Items = new List<ShoppingCartItem>
+            {
+                new ShoppingCartItem { ProductName = "Product1", Price = 90 },
+                new ShoppingCartItem { ProductName = "Product2", Price = 180 }
+            }
+        };
+
+        _mockBasketRepository
+            .Setup(r => r.UpdateBasket(It.IsAny<ShoppingCart>()))
+            .ReturnsAsync(updatedShoppingCart);
 
         // Act
-        var result = await _createBasketCommandHandler.Handle(command, CancellationToken.None);
+        var result = await _createBasketHandler.Handle(command, CancellationToken.None);
 
         // Assert
         Assert.That(result, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(result.UserName, Is.EqualTo(command.UserName));
-            Assert.That(result.Items, Has.Count.EqualTo(command.Items.Count));
+            Assert.That(result.UserName, Is.EqualTo("testuser"));
+            Assert.That(result.Items, Has.Count.EqualTo(2));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Items[0].Price, Is.EqualTo(90));
+            Assert.That(result.Items[1].Price, Is.EqualTo(180));
         });
 
-        _mockBasketRepository.Verify(x => x.UpdateBasket(It.IsAny<ShoppingCart>()), Times.Once);
+        _mockBasketRepository.Verify(r => r.UpdateBasket(It.IsAny<ShoppingCart>()), Times.Once);
+        _discountProtoServiceClientMock.Verify(client => client.GetDiscountAsync(
+            It.Is<GetDiscountRequest>(r => r.ProductName == "Product1"),
+            null, null, default), Times.Once);
+        _discountProtoServiceClientMock.Verify(client => client.GetDiscountAsync(
+            It.Is<GetDiscountRequest>(r => r.ProductName == "Product2"),
+            null, null, default), Times.Once);
     }
 
     #endregion
