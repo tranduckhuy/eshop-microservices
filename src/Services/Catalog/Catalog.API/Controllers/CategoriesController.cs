@@ -5,14 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.API.Controllers
 {
-    public class CategoryController : BaseController
+    public class CategoriesController : BaseController
     {
-        public CategoryController(IMediator mediator) : base(mediator)
+        public CategoriesController(IMediator mediator) : base(mediator)
         {
         }
 
         [HttpGet]
-        [Route("GetAllCategories")]
         public async Task<IActionResult> GetAllCategories()
         {
             var query = new GetAllCategoriesQuery();

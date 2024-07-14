@@ -30,7 +30,7 @@ namespace Ordering.API.Controllers
         }
 
         [HttpPut]
-        [Route("Update/{id}")]
+        [Route("Update/{id:long}")]
         public async Task<IActionResult> UpdateOrder([FromBody] UpdateOrderCommand command, long id)
         {
             if (command.Id != id)
@@ -47,7 +47,7 @@ namespace Ordering.API.Controllers
         }
 
         [HttpDelete]
-        [Route("{id}")]
+        [Route("{id:long}")]
         public async Task<IActionResult> DeleteOrder(long id)
         {
             var command = new DeleteOrderCommand(id);

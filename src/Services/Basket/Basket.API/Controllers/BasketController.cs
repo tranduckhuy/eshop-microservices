@@ -13,7 +13,7 @@ namespace Basket.API.Controllers
         }
 
         [HttpGet]
-        [Route("[action]/{userName}", Name = "GetBasket")]
+        [Route("User/{userName}", Name = "GetBasket")]
         public async Task<IActionResult> GetBasket(string userName)
         {
             var query = new GetBasketByUserNameQuery(userName);
@@ -21,14 +21,14 @@ namespace Basket.API.Controllers
         }
 
         [HttpPost]
-        [Route("[action]")]
+        [Route("[action]", Name = "UpdateBasket")]
         public async Task<IActionResult> UpdateBasket([FromBody] CreateBasketCommand command)
         {
             return await ExecuteAsync<CreateBasketCommand, BasketResponse>(command);
         }
 
         [HttpDelete]
-        [Route("[action]/{userName}", Name = "DeleteBasket")]
+        [Route("{userName}", Name = "DeleteBasket")]
         public async Task<IActionResult> DeleteBasket(string userName)
         {
             var command = new DeleteBasketByUserNameCommand(userName);

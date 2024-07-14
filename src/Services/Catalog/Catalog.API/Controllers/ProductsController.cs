@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.API.Controllers
 {
-    public class ProductController : BaseController
+    public class ProductsController : BaseController
     {
-        public ProductController(IMediator mediator) : base(mediator)
+        public ProductsController(IMediator mediator) : base(mediator)
         {
         }
 
@@ -30,28 +30,37 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
-        [Route("GetProducts")]
         public async Task<IActionResult> GetProducts([FromQuery] CatalogSpecParams catalogSpecParams)
         {
             var query = new GetProductsQuery(catalogSpecParams);
             return await ExecuteAsync<GetProductsQuery, Pagination<ProductResponse>>(query);
         }
 
-        [HttpPost("UpdateProduct")]
-        public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductCommand command)
+        [HttpPut]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductCommand command, Guid id)
         {
+            if (command.Id != id)
+            {
+                var errorResponse = new ApiResponse<ProductResponse>
+                {
+                    IsSuccess = false,
+                    Message = "The provided ID does not match the resource ID.",
+                    Details = "The ID provided in the request body does not match the ID specified in the URL."
+                };
+                return BadRequest(errorResponse);
+            }
             return await ExecuteAsync<UpdateProductCommand, bool>(command);
         }
 
         [HttpPost]
-        [Route("CreateProduct")]
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductCommand command)
         {
             return await ExecuteAsync<CreateProductCommand, ProductResponse>(command);
         }
 
-        [HttpGet]
-        [Route("[action]/{id:guid}", Name = "DeleteProduct")]
+        [HttpDelete]
+        [Route("{id:guid}", Name = "DeleteProduct")]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
             var command = new DeleteProductByIdCommand(id);

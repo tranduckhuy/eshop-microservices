@@ -16,13 +16,13 @@ namespace Catalog.API.Tests.Controllers
     public class ProductControllerTests
     {
         private Mock<IMediator> _mediatorMock;
-        private ProductController _controller;
+        private ProductsController _controller;
 
         [SetUp]
         public void SetUp()
         {
             _mediatorMock = new Mock<IMediator>();
-            _controller = new ProductController(_mediatorMock.Object);
+            _controller = new ProductsController(_mediatorMock.Object);
         }
 
         [Test]
