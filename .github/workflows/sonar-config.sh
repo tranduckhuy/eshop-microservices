@@ -22,5 +22,7 @@ dotnet build EShop.sln --configuration Debug
 dotnet test tests/Services/Catalog/Catalog.Application.Test/Catalog.Application.Test.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 dotnet test tests/Services/Catalog/Catalog.Infrastructure.Test/Catalog.Infrastructure.Test.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 dotnet test tests/Services/Catalog/Catalog.API.Test/Catalog.API.Test.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+dotnet test tests/Services/Basket/Basket.Application.Test/Basket.Application.Test.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+dotnet test tests/Services/Discount/Discount.Application.Test/Discount.Application.Test.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 
 ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${SONAR_TOKEN}"
