@@ -42,4 +42,4 @@ app.MapHealthChecks("/health", new HealthCheckOptions()
 // Seed data for the first time
 await app.Services.SeedDataAsync();
 
-app.Run();
+await app.RunAsync();

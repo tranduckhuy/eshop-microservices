@@ -5,12 +5,10 @@ using Catalog.Application.Queries;
 using Catalog.Application.Responses;
 using Catalog.Domain.Specs;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Moq;
 
-namespace Catalog.API.Tests.Controllers
+namespace Catalog.API.Test
 {
     [TestFixture]
     public class ProductControllerTests
@@ -107,7 +105,7 @@ namespace Catalog.API.Tests.Controllers
                 .ReturnsAsync(true);
 
             // Act
-            var result = await _controller.UpdateProduct(updateProductCommand);
+            var result = await _controller.UpdateProduct(updateProductCommand, updateProductCommand.Id);
 
             // Assert
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
@@ -116,6 +114,27 @@ namespace Catalog.API.Tests.Controllers
             var apiResponse = okResult.Value as ApiResponse<bool>;
             Assert.That(apiResponse, Is.Not.Null);
             Assert.That(apiResponse.Data, Is.EqualTo(true));
+        }
+
+        [Test]
+        public async Task UpdateProduct_ReturnsBadRequest_WhenUpdateIdNotMatch()
+        {
+            // Arrange
+            var updateId = Guid.NewGuid();
+            var updateProductCommand = CreateValidUpdateProductCommand();
+            _mediatorMock.Setup(m => m.Send(It.IsAny<UpdateProductCommand>(), default))
+                .ReturnsAsync(true);
+
+            // Act
+            var result = await _controller.UpdateProduct(updateProductCommand, updateId);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+            var okResult = result as BadRequestObjectResult;
+            Assert.That(okResult, Is.Not.Null);
+            var apiResponse = okResult.Value as ApiResponse<ProductResponse>;
+            Assert.That(apiResponse, Is.Not.Null);
+            Assert.That(apiResponse.IsSuccess, Is.EqualTo(false));
         }
 
         [Test]

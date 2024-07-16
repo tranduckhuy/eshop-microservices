@@ -29,7 +29,7 @@ public class CommandUnitTests
         _deleteBasketCommandHandler = new DeleteBasketByUserNameHandler(_mockBasketRepository.Object);
     }
 
-    private AsyncUnaryCall<CouponModel> CreateAsyncUnaryCall(CouponModel response)
+    private static AsyncUnaryCall<CouponModel> CreateAsyncUnaryCall(CouponModel response)
     {
         var tcs = new TaskCompletionSource<CouponModel>();
         tcs.SetResult(response);

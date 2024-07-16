@@ -21,7 +21,7 @@ namespace Ordering.Application.Commands.Handlers
         {
             var order = OrderingMapper.Mapper.Map<Order>(request);
             var generateOrder = await _orderRepository.AddAsync(order);
-            _logger.LogInformation($"----- Order Created 'Username: {generateOrder.UserName}' - 'Id: {generateOrder.Id}'");
+            _logger.LogInformation("----- Order Created 'Username: {UserName}' - 'Id: {Id}'", generateOrder.UserName, generateOrder.Id);
             return generateOrder.Id;
         }
     }

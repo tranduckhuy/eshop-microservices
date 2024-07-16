@@ -25,4 +25,5 @@ RUN dotnet publish "./Basket.API.csproj" -c "$BUILD_CONFIGURATION" -o /app/publi
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+USER app
 ENTRYPOINT ["dotnet", "Basket.API.dll"]

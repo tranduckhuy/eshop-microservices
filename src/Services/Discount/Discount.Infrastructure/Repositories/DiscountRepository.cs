@@ -9,12 +9,10 @@ namespace Discount.Infrastructure.Repositories
 {
     public class DiscountRepository : IDiscountRepository
     {
-        private readonly IConfiguration _configuration;
         private readonly string _connectionString;
 
         public DiscountRepository(IConfiguration configuration)
         {
-            _configuration = configuration;
             _connectionString = configuration["DatabaseSettings:ConnectionString"]
                 ?? throw new InvalidDataException("The PostgreSQL connection string is missing in the configuration. Please provide a valid connection string.");
         }

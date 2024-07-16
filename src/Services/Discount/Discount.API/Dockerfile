@@ -16,13 +16,14 @@ COPY ["src/Services/Discount/Discount.Infrastructure/Discount.Infrastructure.csp
 RUN dotnet restore "./src/Services/Discount/Discount.API/Discount.API.csproj"
 COPY . .
 WORKDIR "/src/src/Services/Discount/Discount.API"
-RUN dotnet build "./Discount.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./Discount.API.csproj" -c "$BUILD_CONFIGURATION" -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Discount.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Discount.API.csproj" -c "$BUILD_CONFIGURATION" -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+USER app
 ENTRYPOINT ["dotnet", "Discount.API.dll"]

@@ -15,4 +15,4 @@ var app = builder.Build();
 app.MapGrpcService<DiscountService>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client.");
 
-app.Run();
+await app.RunAsync();

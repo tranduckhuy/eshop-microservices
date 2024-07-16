@@ -16,7 +16,7 @@ namespace Ordering.Infrastructure.Data
                     sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
                     onRetry: (exception, timeSpan, retry, ctx) =>
                     {
-                        logger.LogError($"[{retry}] Exception {exception.Message} occurred in {timeSpan}");
+                        logger.LogError("[{retry}] Exception {Message} occurred in {timeSpan}", retry, exception.Message, timeSpan);
                     });
 
             await policy.ExecuteAsync(async () =>
@@ -53,7 +53,7 @@ namespace Ordering.Infrastructure.Data
                     CVV = "123",
                     PaymentMethod = PaymentMethod.CreditCard,
                     LastModifiedBy = "Huy",
-                    LastModifiedDate = new DateTime(),
+                    LastModifiedDate = DateTime.MinValue,
                 }
             ];
         }

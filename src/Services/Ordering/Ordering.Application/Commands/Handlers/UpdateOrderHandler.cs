@@ -27,7 +27,7 @@ namespace Ordering.Application.Commands.Handlers
             }
             OrderingMapper.Mapper.Map<UpdateOrderCommand, Order>(request, existingOrder);
             await _orderRepository.UpdateAsync(existingOrder);
-            _logger.LogInformation($"Order of '{existingOrder.UserName}' - 'Id: {existingOrder.Id}' is successfully updated");
+            _logger.LogInformation("Order of '{UserName}' - 'Id: {Id}' is successfully updated", existingOrder.UserName, existingOrder.Id);
 
             return Unit.Value;
         }

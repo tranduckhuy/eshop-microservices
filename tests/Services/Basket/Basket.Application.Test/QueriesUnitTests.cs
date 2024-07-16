@@ -36,6 +36,8 @@ namespace Basket.Application.Test
                 }
             };
 
+            var totalPrice = basket.Items.Sum(x => x.Price * x.Quantity);
+
             _basketRepository.Setup(x => x.GetBasket(command.UserName)).ReturnsAsync(basket);
 
             // Act
@@ -47,6 +49,7 @@ namespace Basket.Application.Test
             {
                 Assert.That(result.UserName, Is.EqualTo(command.UserName));
                 Assert.That(result.Items, Has.Count.EqualTo(basket.Items.Count));
+                Assert.That(result.TotalPrice, Is.EqualTo(totalPrice));
             });
         }
 

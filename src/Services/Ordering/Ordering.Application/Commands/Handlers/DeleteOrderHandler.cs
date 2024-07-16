@@ -25,8 +25,7 @@ namespace Ordering.Application.Commands.Handlers
                 throw new OrderNotFoundException(nameof(Order), request.Id);
             }
             await _orderRepository.DeleteAsync(order);
-            _logger.LogInformation($"Order of '{order.UserName}' - 'Id: {order.Id}' is successfully deleted");
-
+            _logger.LogInformation("Order of '{UserName}' - 'Id: {Id}' is successfully deleted", order.UserName, order.Id);
             return Unit.Value;
         }
     }

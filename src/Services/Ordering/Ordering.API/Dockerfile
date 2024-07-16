@@ -16,13 +16,14 @@ COPY ["src/Services/Ordering/Ordering.Domain/Ordering.Domain.csproj", "src/Servi
 RUN dotnet restore "./src/Services/Ordering/Ordering.API/Ordering.API.csproj"
 COPY . .
 WORKDIR "/src/src/Services/Ordering/Ordering.API"
-RUN dotnet build "./Ordering.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./Ordering.API.csproj" -c "$BUILD_CONFIGURATION" -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Ordering.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Ordering.API.csproj" -c "$BUILD_CONFIGURATION" -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+USER app
 ENTRYPOINT ["dotnet", "Ordering.API.dll"]

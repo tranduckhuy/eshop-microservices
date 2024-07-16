@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Discount.Infrastructure.Exceptions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Npgsql;
@@ -20,7 +21,7 @@ namespace Discount.Infrastructure.Extensions
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);    
+                throw new DatabaseMigrationException("An error occurred while migrating the database.", ex);
             }
             return serviceProvider;
         }
