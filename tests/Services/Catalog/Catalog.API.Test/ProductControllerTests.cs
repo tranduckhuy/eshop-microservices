@@ -240,7 +240,7 @@ namespace Catalog.API.Test
         }
 
         [Test]
-        public async Task GetProductByName_ReturnsApiResponseWithError_WhenModelIsNull()
+        public async Task CreateProduct_ReturnsApiResponseWithError_WhenModelIsNull()
         {
             // Act
             var result = await _controller.CreateProduct(null!);

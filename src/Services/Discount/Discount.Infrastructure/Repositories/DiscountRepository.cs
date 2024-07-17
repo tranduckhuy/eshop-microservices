@@ -25,7 +25,7 @@ namespace Discount.Infrastructure.Repositories
         public async Task<Coupon?> CreateDiscount(Coupon coupon)
         {
             await using var connection = new NpgsqlConnection(_connectionString);
-            return await connection.QueryFirstOrDefaultAsync<Coupon>(CouponSqlQueries.InsertCoupon, coupon); ;
+            return await connection.QueryFirstOrDefaultAsync<Coupon>(CouponSqlQueries.InsertCoupon, coupon);
         }
 
         public async Task<bool> DeleteDiscount(string productName)

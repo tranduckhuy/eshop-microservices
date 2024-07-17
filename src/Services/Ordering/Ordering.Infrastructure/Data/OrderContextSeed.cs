@@ -21,7 +21,7 @@ namespace Ordering.Infrastructure.Data
 
             await policy.ExecuteAsync(async () =>
             {
-                if (!orderContext.Orders.Any())
+                if (!await orderContext.Orders.AnyAsync())
                 {
                     orderContext.Orders.AddRange(GetPreconfiguredOrders());
                     await orderContext.SaveChangesAsync();

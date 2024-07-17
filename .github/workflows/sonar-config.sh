@@ -25,6 +25,7 @@ dotnet test ${CATALOG_PREFIX}Application.Test/Catalog.Application.Test.csproj --
 dotnet test ${CATALOG_PREFIX}Infrastructure.Test/Catalog.Infrastructure.Test.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 dotnet test ${CATALOG_PREFIX}API.Test/Catalog.API.Test.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 dotnet test ${BASKET_PREFIX}Application.Test/Basket.Application.Test.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+dotnet test ${BASKET_PREFIX}API.Test/Basket.API.Test.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 dotnet test ${DISCOUNT_PREFIX}Application.Test/Discount.Application.Test.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 
 ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${SONAR_TOKEN}"
