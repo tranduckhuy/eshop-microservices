@@ -64,6 +64,7 @@ namespace Basket.API.Controllers
             var deleteCommand = new DeleteBasketByUserNameCommand(basketCheckout.UserName);
             await ExecuteAsync<DeleteBasketByUserNameCommand, bool>(deleteCommand);
 
+            _logger.LogInformation("BasketCheckoutEvent published successfully. UserName: {UserName}", eventMessage.UserName);
             return Accepted();
         }
 
