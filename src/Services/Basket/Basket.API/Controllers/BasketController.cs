@@ -1,6 +1,10 @@
 ﻿using Basket.Application.Commands;
+using Basket.Application.Mappers;
 using Basket.Application.Queries;
 using Basket.Application.Responses;
+using Basket.Domain.Entities;
+using EventBus.Messages.Events;
+using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,8 +12,13 @@ namespace Basket.API.Controllers
 {
     public class BasketController : BaseController
     {
-        public BasketController(IMediator mediator) : base(mediator)
+        private readonly IPublishEndpoint _publishEndpoint;
+        private readonly ILogger<BasketController> _logger;
+
+        public BasketController(IMediator mediator, IPublishEndpoint publishEndpoint, ILogger<BasketController> logger) : base(mediator)
         {
+            _publishEndpoint = publishEndpoint;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -34,5 +43,29 @@ namespace Basket.API.Controllers
             var command = new DeleteBasketByUserNameCommand(userName);
             return await ExecuteAsync<DeleteBasketByUserNameCommand, bool>(command);
         }
+
+        [HttpPost]
+        [Route("[action]", Name = "Checkout")]
+        public async Task<IActionResult> Checkout([FromBody] BasketCheckout basketCheckout)
+        {
+            var query = new GetBasketByUserNameQuery(basketCheckout.UserName);
+            var result = await ExecuteAsync<GetBasketByUserNameQuery, BasketResponse>(query);
+
+            if (result is not OkObjectResult okResult || okResult.Value is not ApiResponse<BasketResponse> apiResponse)
+            {
+                return BadRequest();
+            }
+
+            var eventMessage = BasketMapper.Mapper.Map<BasketCheckoutEvent>(basketCheckout);
+            eventMessage.TotalPrice = apiResponse.Data!.TotalPrice;
+            await _publishEndpoint.Publish(eventMessage);
+
+            // Remove the basket
+            var deleteCommand = new DeleteBasketByUserNameCommand(basketCheckout.UserName);
+            await ExecuteAsync<DeleteBasketByUserNameCommand, bool>(deleteCommand);
+
+            return Accepted();
+        }
+
     }
 }
