@@ -78,7 +78,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "RedisSettings__ConnectionString=basketdb:6379"
       - "GrpcSettings__DiscountUrl=http://discount.api:8080"
-      - "EventBusSettings__HostAddress=http://rabbitmq:15672"
+      - "EventBusSettings__HostAddress=amqp://guest:guest@localhost:5672"
     depends_on:
       - basketdb
       - discount.api
@@ -90,7 +90,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings__ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;Username=admin;Password=huydz"
-      - "EventBusSettings__HostAddress=http://rabbitmq:15672"
     depends_on:
       discountdb:
         condition: service_healthy
@@ -102,7 +101,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings__ConnectionString=Server=orderdb;Database=OrderDb;User Id=sa;Password=jC4-a661610ha;TrustServerCertificate=True;"
-      - "EventBusSettings__HostAddress=http://rabbitmq:15672"
+      - "EventBusSettings__HostAddress=amqp://guest:guest@localhost:5672"
     depends_on:
       orderdb:
         condition: service_healthy
