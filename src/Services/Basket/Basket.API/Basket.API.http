@@ -1,6 +1,48 @@
-@Basket.API_HostAddress = http://localhost:5248
+@hostname=localhost
+@port=9001
 
-GET {{Basket.API_HostAddress}}/weatherforecast/
+GET https://{{hostname}}:{{port}}/api/v1/Basket/User/huydz
 Accept: application/json
 
 ###
+POST https://{{hostname}}:{{port}}/api/v1/Basket/Checkout/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "userName": "huydz",
+  "totalPrice": 0,
+  "firstName": "Huy",
+  "lastName": "Tran",
+  "email": "duchuy@eshop.com",
+  "addressLine": "Quy Nhon",
+  "country": "Vietnam",
+  "state": "Quy Nhon",
+  "zipCode": "123456",
+  "cardName": "Visa",
+  "cardNumber": "1610200316102003",
+  "expiration": "10/25",
+  "cvv": "123",
+  "paymentMethod": 2
+}
+
+###
+POST https://{{hostname}}:{{port}}/api/v1/Basket/UpdateBasket/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "userName": "huydz",
+  "items": [
+    {
+      "productId": "a7b2faca-f5b5-4d74-8ba6-cd7b3b4a85f1",
+      "productName": "Adidas Quick Force Indoor Badminton Shoes",
+      "imageFile": "images/products/adidas_shoe-1.png",
+      "price": 3500,
+      "quantity": 3
+    }
+  ]
+}
+
+
+
