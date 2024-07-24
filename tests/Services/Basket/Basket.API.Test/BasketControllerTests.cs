@@ -3,8 +3,10 @@ using Basket.Application.Commands;
 using Basket.Application.Exceptions;
 using Basket.Application.Queries;
 using Basket.Application.Responses;
+using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Basket.API.Test
@@ -13,13 +15,17 @@ namespace Basket.API.Test
     public class BasketControllerTests
     {
         private Mock<IMediator> _mediatorMock;
+        private Mock<IPublishEndpoint> _publishEndpoint;
+        private Mock<ILogger<BasketController>> _logger;
         private BasketController _controller;
 
         [SetUp]
         public void SetUp()
         {
             _mediatorMock = new Mock<IMediator>();
-            _controller = new BasketController(_mediatorMock.Object);
+            _publishEndpoint = new Mock<IPublishEndpoint>();
+            _logger = new Mock<ILogger<BasketController>>();
+            _controller = new BasketController(_mediatorMock.Object, _publishEndpoint.Object, _logger.Object);
         }
 
         [Test]
