@@ -40,7 +40,7 @@ services:
     ports:
       - "1433:1433"
     healthcheck:
-      test: ["CMD-SHELL", "sqlcmd -U sa -P jC4-a661610ha -Q 'SELECT 1'"]
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -U sa -P jC4-a661610ha -Q 'SELECT 1'"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -98,7 +98,7 @@ services:
     container_name: ordering.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - "DatabaseSettings__ConnectionString=Server=orderdb;Database=OrderDb;User Id=sa;Password=jC4-a661610ha;TrustServerCertificate=True;"
+      - "ConnectionStrings__OrderingConnectionString=Server=orderdb;Database=OrderDb;User Id=sa;Password=jC4-a661610ha;TrustServerCertificate=True;"
       - "EventBusSettings__HostAddress=amqp://guest:guest@localhost:5672"
     depends_on:
       orderdb:
