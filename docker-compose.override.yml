@@ -47,6 +47,13 @@ services:
       timeout: 10s
       retries: 5
 
+  rabbitmq:
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
   portainer:
     container_name: portainer
     restart: always
@@ -78,7 +85,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "RedisSettings__ConnectionString=basketdb:6379"
       - "GrpcSettings__DiscountUrl=http://discount.api:8080"
-      - "EventBusSettings__HostAddress=amqp://guest:guest@localhost:5672"
+      - "EventBusSettings__HostAddress=amqp://guest:guest@rabbitmq:5672"
     depends_on:
       - basketdb
       - discount.api
@@ -101,7 +108,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings__OrderingConnectionString=Server=orderdb;Database=OrderDb;User Id=sa;Password=jC4-a661610ha;TrustServerCertificate=True;"
-      - "EventBusSettings__HostAddress=amqp://guest:guest@localhost:5672"
+      - "EventBusSettings__HostAddress=amqp://guest:guest@rabbitmq:5672"
     depends_on:
       orderdb:
         condition: service_healthy
