@@ -1,6 +1,4 @@
-﻿using Azure;
-using MediatR;
-using Microsoft.AspNetCore.Http;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Ordering.Application.Commands;
 using Ordering.Application.Queries;
@@ -30,7 +28,7 @@ namespace Ordering.API.Controllers
         }
 
         [HttpPut]
-        [Route("Update/{id:long}")]
+        [Route("{id:long}")]
         public async Task<IActionResult> UpdateOrder([FromBody] UpdateOrderCommand command, long id)
         {
             if (command.Id != id)

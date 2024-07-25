@@ -37,7 +37,7 @@ namespace Basket.API.Controllers
         }
 
         [HttpDelete]
-        [Route("{userName}", Name = "DeleteBasket")]
+        [Route("User/{userName}", Name = "DeleteBasket")]
         public async Task<IActionResult> DeleteBasket(string userName)
         {
             var command = new DeleteBasketByUserNameCommand(userName);
