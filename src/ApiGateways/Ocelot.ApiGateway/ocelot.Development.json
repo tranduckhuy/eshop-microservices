@@ -181,18 +181,6 @@
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/api/v1/Orders/Checkout",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "host.docker.internal",
-          "Port": "9003"
-        }
-      ],
-      "UpstreamPathTemplate": "/Orders/Checkout",
-      "UpstreamHttpMethod": [ "POST" ]
-    },
-    {
       "DownstreamPathTemplate": "/api/v1/Orders/{id}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

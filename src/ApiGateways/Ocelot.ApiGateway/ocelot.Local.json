@@ -181,18 +181,6 @@
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/api/v1/Orders/Checkout",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": "9003"
-        }
-      ],
-      "UpstreamPathTemplate": "/Orders/Checkout",
-      "UpstreamHttpMethod": [ "POST" ]
-    },
-    {
       "DownstreamPathTemplate": "/api/v1/Orders/{id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
