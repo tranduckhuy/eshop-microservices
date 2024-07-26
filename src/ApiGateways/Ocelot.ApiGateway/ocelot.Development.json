@@ -6,7 +6,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
+          "Host": "172.17.0.1",
           "Port": "9000"
         }
       ],
@@ -19,7 +19,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
+          "Host": "172.17.0.1",
           "Port": "9000"
         }
       ],
@@ -31,7 +31,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
+          "Host": "172.17.0.1",
           "Port": "9000"
         }
       ],
@@ -43,7 +43,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
+          "Host": "172.17.0.1",
           "Port": "9000"
         }
       ],
@@ -55,7 +55,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
+          "Host": "172.17.0.1",
           "Port": "9000"
         }
       ],
@@ -69,7 +69,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
+          "Host": "172.17.0.1",
           "Port": "9001"
         }
       ],
@@ -81,7 +81,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
+          "Host": "172.17.0.1",
           "Port": "9001"
         }
       ],
@@ -96,7 +96,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
+          "Host": "172.17.0.1",
           "Port": "9001"
         }
       ],
@@ -115,7 +115,7 @@
     //  "DownstreamScheme": "http",
     //  "DownstreamHostAndPorts": [
     //    {
-    //      "Host": "host.docker.internal",
+    //      "Host": "172.17.0.1",
     //      "Port": "9001"
     //    }
     //  ],
@@ -136,7 +136,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
+          "Host": "172.17.0.1",
           "Port": "9002"
         }
       ],
@@ -148,7 +148,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
+          "Host": "172.17.0.1",
           "Port": "9002"
         }
       ],
@@ -161,7 +161,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
+          "Host": "172.17.0.1",
           "Port": "9003"
         }
       ],
@@ -173,7 +173,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
+          "Host": "172.17.0.1",
           "Port": "9003"
         }
       ],
@@ -185,7 +185,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
+          "Host": "172.17.0.1",
           "Port": "9003"
         }
       ],
@@ -194,6 +194,6 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://host.docker.internal:9010"
+    "BaseUrl": "http://localhost:9010"
   }
 }
