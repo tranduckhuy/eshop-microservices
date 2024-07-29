@@ -4,9 +4,8 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace Basket.API.Controllers
+namespace Basket.API.Controllers.v1
 {
-    [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public abstract class BaseController : ControllerBase

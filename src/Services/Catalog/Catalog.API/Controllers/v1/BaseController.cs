@@ -4,9 +4,8 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace Catalog.API.Controllers
+namespace Catalog.API.Controllers.v1
 {
-    [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public abstract class BaseController : ControllerBase

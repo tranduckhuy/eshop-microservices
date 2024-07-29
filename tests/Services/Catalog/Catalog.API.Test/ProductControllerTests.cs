@@ -1,4 +1,4 @@
-using Catalog.API.Controllers;
+using Catalog.API.Controllers.v1;
 using Catalog.Application.Commands;
 using Catalog.Application.Exceptions;
 using Catalog.Application.Queries;

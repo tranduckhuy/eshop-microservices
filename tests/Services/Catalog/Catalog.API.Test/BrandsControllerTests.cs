@@ -1,4 +1,4 @@
-﻿using Catalog.API.Controllers;
+﻿using Catalog.API.Controllers.v1;
 using Catalog.Application.Queries;
 using Catalog.Application.Responses;
 using MediatR;

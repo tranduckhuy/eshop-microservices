@@ -4,7 +4,7 @@ using Ordering.Application.Commands;
 using Ordering.Application.Queries;
 using Ordering.Application.Responses;
 
-namespace Ordering.API.Controllers
+namespace Ordering.API.Controllers.v1
 {
     public class OrdersController : BaseController
     {

@@ -1,19 +1,44 @@
-using Basket.Infrastructure;
+using Asp.Versioning;
+using Asp.Versioning.Conventions;
+using Basket.API.Swagger;
 using Basket.Application;
-using Microsoft.OpenApi.Models;
+using Basket.Infrastructure;
 using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using MassTransit;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddApiVersioning();
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddApiVersioning(opt =>
+{
+    opt.DefaultApiVersion = new ApiVersion(1, 0);
+    opt.AssumeDefaultVersionWhenUnspecified = true;
+    opt.ReportApiVersions = true;
+    opt.ApiVersionReader = new UrlSegmentApiVersionReader();
+}).AddMvc(options =>
+{
+    options.Conventions.Add(new VersionByNamespaceConvention());
+}).AddApiExplorer(opt =>
+{
+    opt.GroupNameFormat = "'v'V";
+    opt.SubstituteApiVersionInUrl = true;
+});
+
+builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
+
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.IgnoreObsoleteActions();
+    c.IgnoreObsoleteProperties();
+});
+
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "Basket.API", Version = "v1" }); });
 builder.Services.AddMassTransit(config =>
 {
     config.UsingRabbitMq((ctx, cfg) =>
@@ -29,8 +54,15 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Basket.API v1"));
+    app.UseSwaggerUI(opt =>
+    {
+        var descriptions = app.DescribeApiVersions();
+
+        foreach (var description in descriptions)
+            opt.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Basket API {description.GroupName.ToLowerInvariant()}");
+    });
 }
+
 
 app.UseHttpsRedirection();
 

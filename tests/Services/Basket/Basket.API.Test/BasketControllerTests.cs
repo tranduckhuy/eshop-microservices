@@ -1,4 +1,4 @@
-using Basket.API.Controllers;
+using Basket.API.Controllers.v1;
 using Basket.Application.Commands;
 using Basket.Application.Exceptions;
 using Basket.Application.Queries;

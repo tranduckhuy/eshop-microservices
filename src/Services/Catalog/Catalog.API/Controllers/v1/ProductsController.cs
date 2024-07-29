@@ -5,7 +5,7 @@ using Catalog.Domain.Specs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Catalog.API.Controllers
+namespace Catalog.API.Controllers.v1
 {
     public class ProductsController : BaseController
     {
@@ -25,7 +25,7 @@ namespace Catalog.API.Controllers
         [Route("[action]/{name}", Name = "GetProductByProductName")]
         public async Task<IActionResult> GetProductByName(string name)
         {
-             var query = new GetProductByNameQuery(name);
+            var query = new GetProductByNameQuery(name);
             return await ExecuteAsync<GetProductByNameQuery, IEnumerable<ProductResponse>>(query);
         }
 

@@ -8,7 +8,7 @@ using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Basket.API.Controllers
+namespace Basket.API.Controllers.v1
 {
     public class BasketController : BaseController
     {

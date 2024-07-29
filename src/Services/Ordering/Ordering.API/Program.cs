@@ -7,6 +7,9 @@ using Ordering.Infrastructure.Data;
 using MassTransit;
 using Ordering.API.EventBusConsumer;
 using EventBus.Messages.Common;
+using Asp.Versioning.Conventions;
+using Asp.Versioning;
+using Ordering.API.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,9 +19,32 @@ builder.Services.AddControllers();
 builder.Services.AddApiVersioning();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHealthChecks().Services.AddDbContext<OrderContext>();
-builder.Services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ordering.API", Version = "v1" }); });
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddApiVersioning(opt =>
+{
+    opt.DefaultApiVersion = new ApiVersion(1, 0);
+    opt.AssumeDefaultVersionWhenUnspecified = true;
+    opt.ReportApiVersions = true;
+    opt.ApiVersionReader = new UrlSegmentApiVersionReader();
+}).AddMvc(options =>
+{
+    options.Conventions.Add(new VersionByNamespaceConvention());
+}).AddApiExplorer(opt =>
+{
+    opt.GroupNameFormat = "'v'V";
+    opt.SubstituteApiVersionInUrl = true;
+});
+
+builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
+
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.IgnoreObsoleteActions();
+    c.IgnoreObsoleteProperties();
+});
 
 builder.Services.AddMassTransit(config =>
 {
@@ -42,7 +68,13 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ordering.API v1"));
+    app.UseSwaggerUI(opt =>
+    {
+        var descriptions = app.DescribeApiVersions();
+
+        foreach (var description in descriptions)
+            opt.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Order API {description.GroupName.ToLowerInvariant()}");
+    });
 }
 
 app.UseHttpsRedirection();

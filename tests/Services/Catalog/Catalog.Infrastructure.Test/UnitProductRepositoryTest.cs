@@ -1,15 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Catalog.Domain.Entities;
-using Catalog.Domain.Repositories;
 using Catalog.Domain.Specs;
 using Catalog.Infrastructure.Data;
 using Catalog.Infrastructure.Repositories;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using Moq;
-using NUnit.Framework;
 
 namespace Catalog.Infrastructure.Tests
 {

@@ -5,9 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Ordering.Application.Exceptions;
 
-namespace Ordering.API.Controllers
+namespace Ordering.API.Controllers.v1
 {
-    [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public abstract class BaseController : ControllerBase
@@ -96,13 +95,14 @@ namespace Ordering.API.Controllers
             if (ex is OrderNotFoundException)
             {
                 statusCode = HttpStatusCode.NotFound;
-            } else if (ex is OrderingException)
+            }
+            else if (ex is OrderingException)
             {
                 statusCode = HttpStatusCode.BadRequest;
             }
 
             // Log the exception if needed
-           var errorResponse = new ApiResponse<TResponse>
+            var errorResponse = new ApiResponse<TResponse>
             {
                 IsSuccess = false,
                 Message = message,
