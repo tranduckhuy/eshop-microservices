@@ -17,8 +17,8 @@ DISCOUNT_REPORT_PATHS="${DISCOUNT_PREFIX}Application${REPORT_SUFFIX},${DISCOUNT_
   /d:sonar.token="${SONAR_TOKEN}" \
   /d:sonar.host.url="https://sonarcloud.io" \
   /d:sonar.cs.opencover.reportsPaths="$CATALOG_REPORT_PATHS,$BASKET_REPORT_PATHS,$DISCOUNT_REPORT_PATHS" \
-  /d:sonar.coverage.exclusions="**Infrastructure/Data/**/*,**/Program.cs,**/*Extension*.cs, **/Validators/**, **/Migrations/**" \
-  /d:sonar.cpd.exclusions="**/Program.cs,**/BaseController.cs, **/Validators/**, **/Migrations/**"
+  /d:sonar.coverage.exclusions="**Infrastructure/Data/**/*,**/Program.cs,**/*Extension*.cs, **/Validators/**, **/Migrations/**, **/Swagger/**" \
+  /d:sonar.cpd.exclusions="**/Program.cs,**/BaseController.cs, **/Validators/**, **/Migrations/**, **/Swagger/**"
 
 dotnet build EShop.sln --configuration Debug
 dotnet test ${CATALOG_PREFIX}Application.Test/Catalog.Application.Test.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
