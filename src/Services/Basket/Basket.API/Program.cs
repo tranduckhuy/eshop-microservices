@@ -5,13 +5,33 @@ using Basket.Application;
 using Basket.Infrastructure;
 using HealthChecks.UI.Client;
 using MassTransit;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// Add authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(jwtBearerOptions =>
+    {
+        jwtBearerOptions.Authority = builder.Configuration["Authentication:Authority"];
+        jwtBearerOptions.Audience = builder.Configuration["Authentication:Audience"];
+
+        jwtBearerOptions.TokenValidationParameters.ValidateAudience = true;
+        jwtBearerOptions.TokenValidationParameters.ValidateIssuer = true;
+        jwtBearerOptions.TokenValidationParameters.ValidateIssuerSigningKey = true;
+    });
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("ApiScope", policy =>
+    {
+        policy.RequireAuthenticatedUser().RequireClaim("scope", "basketapi");
+    });
 
 builder.Services.AddApiVersioning(opt =>
 {
@@ -31,10 +51,36 @@ builder.Services.AddApiVersioning(opt =>
 builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
 
 
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(swaggerGenOptions =>
 {
-    c.IgnoreObsoleteActions();
-    c.IgnoreObsoleteProperties();
+    swaggerGenOptions.IgnoreObsoleteActions();
+    swaggerGenOptions.IgnoreObsoleteProperties();
+
+    swaggerGenOptions.AddSecurityDefinition("oauth2",
+        new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.OAuth2,
+            Flows = new OpenApiOAuthFlows
+            {
+                ClientCredentials = new OpenApiOAuthFlow
+                {
+                    TokenUrl =
+                        new Uri($"{builder.Configuration["Authentication:Authority"]}/connect/token"),
+                    Scopes = { { "basketapi", "Basket.API" } }
+                }
+            }
+        });
+
+    swaggerGenOptions.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
+            },
+            new List<string> { "basketapi" }
+        }
+    });
 });
 
 builder.Services.AddInfrastructure(builder.Configuration);

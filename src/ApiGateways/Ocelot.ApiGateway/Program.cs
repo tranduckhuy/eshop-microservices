@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Ocelot.Cache.CacheManager;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
@@ -5,7 +6,7 @@ using Ocelot.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configuration
-builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", true, true);
+builder.Configuration.AddJsonFile($"ocelot.Local.json", true, true);
 
 // Add services to the container.
 builder.Services.AddCors(options =>
@@ -13,6 +14,19 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy",
         policy => { policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin(); });
 });
+
+// Add authentication
+var authScheme = builder.Configuration["Authentication:AuthScheme"] ?? JwtBearerDefaults.AuthenticationScheme;
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(authScheme, jwtBearerOptions =>
+    {
+        jwtBearerOptions.Authority = builder.Configuration["Authentication:Authority"];
+        jwtBearerOptions.Audience = builder.Configuration["Authentication:Audience"];
+
+        jwtBearerOptions.TokenValidationParameters.ValidateAudience = true;
+        jwtBearerOptions.TokenValidationParameters.ValidateIssuer = true;
+        jwtBearerOptions.TokenValidationParameters.ValidateIssuerSigningKey = true;
+    });
 
 builder.Services.AddOcelot()
     .AddCacheManager(o => o.WithDictionaryHandle());

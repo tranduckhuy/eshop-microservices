@@ -4,7 +4,9 @@ using Catalog.API.Swagger;
 using Catalog.Application;
 using Catalog.Infrastructure;
 using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +16,35 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddEndpointsApiExplorer();
 
+// Add cors
+builder.Services.AddCors(corsOptions =>
+{
+    corsOptions.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
 
+    });
+});
+
+// Add authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(jwtBearerOptions =>
+    {
+        jwtBearerOptions.Authority = builder.Configuration["Authentication:Authority"];
+        jwtBearerOptions.Audience = builder.Configuration["Authentication:Audience"];
+
+        jwtBearerOptions.TokenValidationParameters.ValidateAudience = true;
+        jwtBearerOptions.TokenValidationParameters.ValidateIssuer = true;
+        jwtBearerOptions.TokenValidationParameters.ValidateIssuerSigningKey = true;
+    });
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("ApiScope", policy =>
+    {
+        policy.RequireAuthenticatedUser().RequireClaim("scope", "catalogapi");
+    });
+
+// Add api versioning
 builder.Services.AddApiVersioning(opt =>
 {
     opt.DefaultApiVersion = new ApiVersion(1, 0);
@@ -33,10 +63,36 @@ builder.Services.AddApiVersioning(opt =>
 builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
 
 
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(swaggerGenOptions =>
 {
-    c.IgnoreObsoleteActions();
-    c.IgnoreObsoleteProperties();
+    swaggerGenOptions.IgnoreObsoleteActions();
+    swaggerGenOptions.IgnoreObsoleteProperties();
+
+    swaggerGenOptions.AddSecurityDefinition("oauth2",
+        new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.OAuth2,
+            Flows = new OpenApiOAuthFlows
+            {
+                ClientCredentials = new OpenApiOAuthFlow
+                {
+                    TokenUrl =
+                        new Uri($"{builder.Configuration["Authentication:Authority"]}/connect/token"),
+                    Scopes = { { "catalogapi", "Catalog.API" } }
+                }
+            }
+        });
+
+    swaggerGenOptions.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
+            },
+            new List<string> { "catalogapi" }
+        }
+    });
 });
 
 var app = builder.Build();

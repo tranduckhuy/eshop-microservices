@@ -11,6 +11,9 @@ services:
   orderdb:
     image: mcr.microsoft.com/mssql/server:2022-latest
 
+  identitydb:
+    image: postgres
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
 
@@ -47,8 +50,15 @@ services:
       context: .
       dockerfile: src/ApiGateways/Ocelot.ApiGateway/Dockerfile
 
+  identityserver:
+    image: ${DOCKER_REGISTRY-}identityserver
+    build:
+      context: .
+      dockerfile: src/Infrastructures/EShop.IdentityServer/Dockerfile
+
 volumes:
   mongo_data:
   portainer_data:
   postgres_data:
   sqlserver_data:
+  identity_data:

@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using Catalog.Domain.Exceptions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -8,6 +9,7 @@ namespace Catalog.API.Controllers.v1
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [Authorize]
     public abstract class BaseController : ControllerBase
     {
         private readonly IMediator _mediator;

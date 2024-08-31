@@ -86,10 +86,10 @@
         }
       ],
       "UpstreamPathTemplate": "/Basket/UpdateBasket",
-      "UpstreamHttpMethod": [ "POST" ]
-      //      "AuthenticationOptions": {
-      //        "AuthenticationProviderKey": "EShoppingGatewayAuthScheme"
-      //      }
+      "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "EShoppingGatewayAuthScheme"
+      }
     },
     {
       "DownstreamPathTemplate": "/api/v1/Basket/Checkout",
