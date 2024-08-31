@@ -26,7 +26,7 @@ namespace Ordering.Application.Behaviours
 
             if (failures.Count != 0)
             {
-                throw new ValidationException(failures);
+                throw new Exceptions.ValidationException(failures);
             }
 
             // If the request is valid, continue to the next step in the MediatR pipeline
