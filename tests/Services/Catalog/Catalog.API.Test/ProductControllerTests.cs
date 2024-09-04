@@ -1,11 +1,14 @@
+using Amazon.Runtime.Internal.Util;
 using Catalog.API.Controllers.v1;
 using Catalog.Application.Commands;
 using Catalog.Application.Exceptions;
 using Catalog.Application.Queries;
 using Catalog.Application.Responses;
 using Catalog.Domain.Specs;
+using Common.Logging.Correlation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Catalog.API.Test
@@ -14,13 +17,17 @@ namespace Catalog.API.Test
     public class ProductControllerTests
     {
         private Mock<IMediator> _mediatorMock;
+        private Mock<ILogger<ProductsController>> _logger;
+        private Mock<ICorrelationIdGenerator> _correlationIdGenerator;
         private ProductsController _controller;
 
         [SetUp]
         public void SetUp()
         {
             _mediatorMock = new Mock<IMediator>();
-            _controller = new ProductsController(_mediatorMock.Object);
+            _logger = new Mock<ILogger<ProductsController>>();
+            _correlationIdGenerator = new Mock<ICorrelationIdGenerator>();
+            _controller = new ProductsController(_mediatorMock.Object, _logger.Object, _correlationIdGenerator.Object);
         }
 
         [Test]

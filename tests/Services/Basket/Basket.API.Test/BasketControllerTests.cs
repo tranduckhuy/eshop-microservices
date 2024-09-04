@@ -3,6 +3,7 @@ using Basket.Application.Commands;
 using Basket.Application.Exceptions;
 using Basket.Application.Queries;
 using Basket.Application.Responses;
+using Common.Logging.Correlation;
 using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,7 @@ namespace Basket.API.Test
         private Mock<IMediator> _mediatorMock;
         private Mock<IPublishEndpoint> _publishEndpoint;
         private Mock<ILogger<BasketController>> _logger;
+        private Mock<ICorrelationIdGenerator> _correlationIdGenerator;
         private BasketController _controller;
 
         [SetUp]
@@ -25,7 +27,8 @@ namespace Basket.API.Test
             _mediatorMock = new Mock<IMediator>();
             _publishEndpoint = new Mock<IPublishEndpoint>();
             _logger = new Mock<ILogger<BasketController>>();
-            _controller = new BasketController(_mediatorMock.Object, _publishEndpoint.Object, _logger.Object);
+            _correlationIdGenerator = new Mock<ICorrelationIdGenerator>();
+            _controller = new BasketController(_mediatorMock.Object, _publishEndpoint.Object, _logger.Object, _correlationIdGenerator.Object);
         }
 
         [Test]
