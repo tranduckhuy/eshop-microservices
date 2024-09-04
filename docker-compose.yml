@@ -56,9 +56,16 @@ services:
       context: .
       dockerfile: src/Infrastructures/EShop.IdentityServer/Dockerfile
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.0
+
 volumes:
   mongo_data:
   portainer_data:
   postgres_data:
   sqlserver_data:
   identity_data:
+  elasticsearch_data:

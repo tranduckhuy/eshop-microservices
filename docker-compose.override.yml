@@ -187,3 +187,23 @@ services:
     volumes:
       - ./localhost.pfx:/https/localhost.pfx:ro
       - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
+
+  elasticsearch:
+    container_name: elasticsearch
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.type=single-node"
+      - "xpack.security.enabled=false"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+  kibana:
+    container_name: kibana
+    environment:
+      - "ELASTICSEARCH_URL=http://elasticsearch:9200"
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
