@@ -1,4 +1,5 @@
-﻿using EventBus.Messages.Events;
+﻿using Common.Logging.Correlation;
+using EventBus.Messages.Events;
 using MassTransit;
 using MediatR;
 using Ordering.Application.Commands;
@@ -11,10 +12,14 @@ namespace Ordering.API.EventBusConsumer
         private readonly IMediator _mediator;
         private readonly ILogger<BasketOrderingConsumer> _logger;
 
-        public BasketOrderingConsumer(IMediator mediator, ILogger<BasketOrderingConsumer> logger)
+        public BasketOrderingConsumer(
+            IMediator mediator,
+            ILogger<BasketOrderingConsumer> logger,
+            ICorrelationIdGenerator correlationIdGenerator)
         {
             _mediator = mediator;
             _logger = logger;
+            _logger.LogInformation("Correlation Id: {correlationId}", correlationIdGenerator.Get());
         }
 
         public async Task Consume(ConsumeContext<BasketCheckoutEvent> context)

@@ -3,6 +3,7 @@ using Basket.Application.Mappers;
 using Basket.Application.Queries;
 using Basket.Application.Responses;
 using Basket.Domain.Entities;
+using Common.Logging.Correlation;
 using EventBus.Messages.Events;
 using MassTransit;
 using MediatR;
@@ -10,15 +11,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Basket.API.Controllers.v1
 {
-    public class BasketController : BaseController
+    public class BasketController : BaseController<BasketController>
     {
         private readonly IPublishEndpoint _publishEndpoint;
-        private readonly ILogger<BasketController> _logger;
 
-        public BasketController(IMediator mediator, IPublishEndpoint publishEndpoint, ILogger<BasketController> logger) : base(mediator)
+        public BasketController(
+            IMediator mediator,
+            IPublishEndpoint publishEndpoint,
+            ILogger<BasketController> logger,
+            ICorrelationIdGenerator correlationIdGenerator
+        ) : base(mediator, logger, correlationIdGenerator)
         {
             _publishEndpoint = publishEndpoint;
-            _logger = logger;
         }
 
         [HttpGet]
@@ -53,6 +57,7 @@ namespace Basket.API.Controllers.v1
 
             if (result is not OkObjectResult okResult || okResult.Value is not ApiResponse<BasketResponse> apiResponse)
             {
+                Logger.LogError("Error while getting basket by username. UserName: {UserName}", basketCheckout.UserName);
                 return BadRequest();
             }
 
@@ -64,7 +69,7 @@ namespace Basket.API.Controllers.v1
             var deleteCommand = new DeleteBasketByUserNameCommand(basketCheckout.UserName);
             await ExecuteAsync<DeleteBasketByUserNameCommand, bool>(deleteCommand);
 
-            _logger.LogInformation("BasketCheckoutEvent published successfully. UserName: {UserName}", eventMessage.UserName);
+            Logger.LogInformation("BasketCheckoutEvent published successfully. UserName: {UserName}", eventMessage.UserName);
             return Accepted();
         }
 

@@ -4,18 +4,26 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Ordering.Application.Exceptions;
+using Common.Logging.Correlation;
 
 namespace Ordering.API.Controllers.v1
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    public abstract class BaseController : ControllerBase
+    public abstract class BaseController<T> : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ILogger<BaseController<T>> _logger;
+        private readonly ICorrelationIdGenerator _correlationIdGenerator;
 
-        protected BaseController(IMediator mediator)
+        protected ILogger<BaseController<T>> Logger => _logger;
+
+        protected BaseController(IMediator mediator, ILogger<BaseController<T>> logger, ICorrelationIdGenerator correlationIdGenerator)
         {
             _mediator = mediator;
+            _logger = logger;
+            _correlationIdGenerator = correlationIdGenerator;
+            Logger.LogInformation("Correlation Id: {correlationId}", _correlationIdGenerator.Get());
         }
 
         /// <summary>

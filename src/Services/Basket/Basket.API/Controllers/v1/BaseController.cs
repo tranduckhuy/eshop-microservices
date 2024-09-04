@@ -1,5 +1,5 @@
-﻿using Asp.Versioning;
-using Basket.Domain.Exceptions;
+﻿using Basket.Domain.Exceptions;
+using Common.Logging.Correlation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,13 +10,20 @@ namespace Basket.API.Controllers.v1
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize]
-    public abstract class BaseController : ControllerBase
+    public abstract class BaseController<T> : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ILogger<BaseController<T>> _logger;
+        private readonly ICorrelationIdGenerator _correlationIdGenerator;
 
-        protected BaseController(IMediator mediator)
+        protected ILogger<BaseController<T>> Logger => _logger;
+
+        protected BaseController(IMediator mediator, ILogger<BaseController<T>>  logger, ICorrelationIdGenerator correlationIdGenerator)
         {
             _mediator = mediator;
+            _logger = logger;
+            _correlationIdGenerator = correlationIdGenerator;
+            Logger.LogInformation("Correlation Id: {correlationId}", _correlationIdGenerator.Get());
         }
 
         /// <summary>

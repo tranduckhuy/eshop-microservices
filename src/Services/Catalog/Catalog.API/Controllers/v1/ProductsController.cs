@@ -2,16 +2,19 @@
 using Catalog.Application.Queries;
 using Catalog.Application.Responses;
 using Catalog.Domain.Specs;
+using Common.Logging.Correlation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.API.Controllers.v1
 {
-    public class ProductsController : BaseController
+    public class ProductsController : BaseController<ProductsController>
     {
-        public ProductsController(IMediator mediator) : base(mediator)
-        {
-        }
+        public ProductsController(
+            IMediator mediator,
+            ILogger<ProductsController> logger,
+            ICorrelationIdGenerator correlationIdGenerator
+        ) : base(mediator, logger, correlationIdGenerator) { }
 
         [HttpGet]
         [Route("{id:guid}", Name = "GetProductById")]
