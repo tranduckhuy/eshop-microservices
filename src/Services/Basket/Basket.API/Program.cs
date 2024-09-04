@@ -3,17 +3,24 @@ using Asp.Versioning.Conventions;
 using Basket.API.Swagger;
 using Basket.Application;
 using Basket.Infrastructure;
+using Common.Logging;
+using Common.Logging.Correlation;
 using HealthChecks.UI.Client;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddScoped<ICorrelationIdGenerator, CorrelationIdGenerator>();
+
+// Serilog configuration
+builder.Host.UseSerilog(Logging.ConfigureLogger);
 
 // Add authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

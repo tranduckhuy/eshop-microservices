@@ -1,14 +1,22 @@
+using Common.Logging;
+using Common.Logging.Correlation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Ocelot.Cache.CacheManager;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configuration
-builder.Configuration.AddJsonFile($"ocelot.Local.json", true, true);
+builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", true, true);
+
+// Serilog configuration
+builder.Host.UseSerilog(Logging.ConfigureLogger);
 
 // Add services to the container.
+builder.Services.AddScoped<ICorrelationIdGenerator, CorrelationIdGenerator>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
@@ -39,6 +47,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Configure the HTTP request pipeline.
+app.AddCorrelationIdMiddleware();
 
 app.UseRouting();
 

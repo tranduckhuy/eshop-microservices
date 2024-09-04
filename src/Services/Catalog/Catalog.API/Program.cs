@@ -3,10 +3,13 @@ using Asp.Versioning.Conventions;
 using Catalog.API.Swagger;
 using Catalog.Application;
 using Catalog.Infrastructure;
+using Common.Logging;
+using Common.Logging.Correlation;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +18,10 @@ builder.Services.AddControllers();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddScoped<ICorrelationIdGenerator, CorrelationIdGenerator>();
+
+// Serilog configuration
+builder.Host.UseSerilog(Logging.ConfigureLogger);  
 
 // Add cors
 builder.Services.AddCors(corsOptions =>
@@ -97,6 +104,7 @@ builder.Services.AddSwaggerGen(swaggerGenOptions =>
 
 var app = builder.Build();
 
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();

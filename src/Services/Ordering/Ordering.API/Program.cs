@@ -1,25 +1,30 @@
-using Ordering.Infrastructure;
-using Ordering.Application;
-using Microsoft.OpenApi.Models;
-using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Ordering.Infrastructure.Data;
-using MassTransit;
-using Ordering.API.EventBusConsumer;
-using EventBus.Messages.Common;
-using Asp.Versioning.Conventions;
 using Asp.Versioning;
+using Asp.Versioning.Conventions;
+using Common.Logging;
+using Common.Logging.Correlation;
+using EventBus.Messages.Common;
+using HealthChecks.UI.Client;
+using MassTransit;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Ordering.API.EventBusConsumer;
 using Ordering.API.Swagger;
+using Ordering.Application;
+using Ordering.Infrastructure;
+using Ordering.Infrastructure.Data;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Serilog configuration
+builder.Host.UseSerilog(Logging.ConfigureLogger);
 
+// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddApiVersioning();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddHealthChecks().Services.AddDbContext<OrderContext>();
+builder.Services.AddScoped<ICorrelationIdGenerator, CorrelationIdGenerator>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddApiVersioning(opt =>
