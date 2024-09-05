@@ -180,7 +180,7 @@ services:
       - "ConnectionStrings__IdentityConnection=Server=identitydb;Port=5433;Database=identity;Username=admin;Password={password}"
       - "ConnectionStrings__IdentityServer=Server=identitydb;Port=5433;Database=identityserver;Username=admin;Password={password}"
     depends_on:
-      identitydb
+      - identitydb
     ports:
       - "9011:8080"
     entrypoint: /bin/sh -c "update-ca-certificates && dotnet EShop.IdentityServer.dll"
