@@ -63,6 +63,7 @@ namespace Basket.API.Controllers.v1
 
             var eventMessage = BasketMapper.Mapper.Map<BasketCheckoutEvent>(basketCheckout);
             eventMessage.TotalPrice = apiResponse.Data!.TotalPrice;
+            eventMessage.CorrelationId = CorrelationIdGenerator.Get();
             await _publishEndpoint.Publish(eventMessage);
 
             // Remove the basket

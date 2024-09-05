@@ -16,6 +16,7 @@ namespace Basket.API.Controllers.v1
         private readonly ILogger<BaseController<T>> _logger;
         private readonly ICorrelationIdGenerator _correlationIdGenerator;
 
+        protected ICorrelationIdGenerator CorrelationIdGenerator => _correlationIdGenerator;
         protected ILogger<BaseController<T>> Logger => _logger;
 
         protected BaseController(IMediator mediator, ILogger<BaseController<T>>  logger, ICorrelationIdGenerator correlationIdGenerator)

@@ -14,19 +14,18 @@ namespace Ordering.API.EventBusConsumer
 
         public BasketOrderingConsumer(
             IMediator mediator,
-            ILogger<BasketOrderingConsumer> logger,
-            ICorrelationIdGenerator correlationIdGenerator)
+            ILogger<BasketOrderingConsumer> logger)
         {
             _mediator = mediator;
             _logger = logger;
-            _logger.LogInformation("Correlation Id: {correlationId}", correlationIdGenerator.Get());
         }
 
         public async Task Consume(ConsumeContext<BasketCheckoutEvent> context)
         {
+            using var scope = _logger.BeginScope("Consuming Basket Checkout Event - CorrelationId: {CorrelationId}", context.Message.CorrelationId);
             var command = OrderingMapper.Mapper.Map<CheckoutOrderCommand>(context.Message);
             var result = await _mediator.Send(command);
-            _logger.LogInformation("BasketCheckoutEvent consumed successfully. Created Order Id : {result}", result);
+            _logger.LogInformation("BasketCheckoutEvent consumed successfully. Created Order Id : {orderId}", result);
         }
     }
 
