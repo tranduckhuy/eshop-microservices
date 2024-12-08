@@ -1,4 +1,9 @@
 services:
+  reverseproxy:
+    build:
+        context: .
+        dockerfile: src/ApiGateways/Ocelot.ApiGateway/Dockerfile
+
   catalogdb:
     image: mongo:4.4.18
 

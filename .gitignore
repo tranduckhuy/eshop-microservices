@@ -365,5 +365,4 @@ FodyWeavers.xsd
 # Development appsettings file
 *.Development.json
 localhost.crt
-
 localhost.key

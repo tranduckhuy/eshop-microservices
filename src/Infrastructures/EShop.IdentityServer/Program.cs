@@ -4,6 +4,7 @@ using Duende.IdentityServer.Models;
 using EShop.IdentityServer;
 using EShop.IdentityServer.Data;
 using EShop.IdentityServer.Models;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +14,15 @@ builder.Services.AddEShopIdentityServer();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
+var forwardHeaders = new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+};
+
+forwardHeaders.KnownNetworks.Clear();
+forwardHeaders.KnownProxies.Clear();
+app.UseForwardedHeaders(forwardHeaders);
 
 app.UseHttpsRedirection();
 
