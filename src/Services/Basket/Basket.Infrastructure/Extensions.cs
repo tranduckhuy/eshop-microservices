@@ -24,7 +24,7 @@ namespace Basket.Infrastructure
                     HealthStatus.Degraded
                 );
 
-            services.AddTransient<IBasketRepository, BasketRepository>();
+            services.AddScoped<IBasketRepository, BasketRepository>();
 
             return services;
         }

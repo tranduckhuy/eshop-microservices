@@ -35,7 +35,7 @@ namespace EShop.IdentityServer
                     operationalStoreOptions.ResolveDbContextOptions = ResolveDbContextOptions;
                 });
 
-            //services.AddTransient<IProfileService, ProfileService>();
+            //services.AddScope<IProfileService, ProfileService>();
 
             return services;
         }
