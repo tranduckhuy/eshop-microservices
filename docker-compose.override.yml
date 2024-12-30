@@ -165,7 +165,7 @@ services:
     container_name: identityserver
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - "ConnectionStrings__IdentityConnection=Server=identitydb;Port=5433;Database=identity;Username=admin;Password={password}"
+      - "ConnectionStrings__Identity=Server=identitydb;Port=5433;Database=identity;Username=admin;Password={password}"
       - "ConnectionStrings__IdentityServer=Server=identitydb;Port=5433;Database=identityserver;Username=admin;Password={password}"
     depends_on:
       - identitydb
