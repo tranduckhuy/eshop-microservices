@@ -2,6 +2,9 @@ services:
   reverseproxy:
     container_name: nginxgateway
     restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /etc/nginx/ssl:/etc/nginx/ssl:ro
     ports:
       - "9010:9010"
     depends_on:
@@ -145,18 +148,18 @@ services:
     ports:
       - "9003:8080"
 
-  ocelotapigateway:
-    container_name: ocelotapigateway
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    depends_on:
-      - identityserver
-      - catalog.api
-      - discount.api
-      - basket.api
-      - ordering.api
-    ports:
-      - "9010:8080"
+  # ocelotapigateway:
+  #   container_name: ocelotapigateway
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #   depends_on:
+  #     - identityserver
+  #     - catalog.api
+  #     - discount.api
+  #     - basket.api
+  #     - ordering.api
+  #   ports:
+  #     - "9010:8080"
 
   identityserver:
     container_name: identityserver

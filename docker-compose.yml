@@ -1,8 +1,6 @@
 services:
   reverseproxy:
-    build:
-        context: .
-        dockerfile: src/ApiGateways/Ocelot.ApiGateway/Dockerfile
+    image: nginx:alpine
 
   catalogdb:
     image: mongo:4.4.18
@@ -14,7 +12,7 @@ services:
     image: postgres
 
   orderdb:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:2019-latest
 
   identitydb:
     image: postgres
@@ -49,11 +47,11 @@ services:
       context: .
       dockerfile: src/Services/Ordering/Ordering.API/Dockerfile
 
-  ocelotapigateway:
-    image: ${DOCKER_REGISTRY-}ocelotapigateway
-    build:
-      context: .
-      dockerfile: src/ApiGateways/Ocelot.ApiGateway/Dockerfile
+  # ocelotapigateway:
+  #   image: ${DOCKER_REGISTRY-}ocelotapigateway
+  #   build:
+  #     context: .
+  #     dockerfile: src/ApiGateways/Ocelot.ApiGateway/Dockerfile
 
   identityserver:
     image: ${DOCKER_REGISTRY-}identityserver

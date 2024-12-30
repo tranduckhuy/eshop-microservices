@@ -2,6 +2,7 @@
 using Catalog.Application.Responses;
 using Common.Logging.Correlation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.API.Controllers.v1
@@ -15,6 +16,7 @@ namespace Catalog.API.Controllers.v1
         ) : base(mediator, logger, correlationIdGenerator) { }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllBrands()
         {
             var query = new GetAllBrandsQuery();

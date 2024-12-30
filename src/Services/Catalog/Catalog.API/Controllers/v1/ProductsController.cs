@@ -4,6 +4,7 @@ using Catalog.Application.Responses;
 using Catalog.Domain.Specs;
 using Common.Logging.Correlation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.API.Controllers.v1
@@ -33,6 +34,7 @@ namespace Catalog.API.Controllers.v1
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetProducts([FromQuery] CatalogSpecParams catalogSpecParams)
         {
             var query = new GetProductsQuery(catalogSpecParams);
