@@ -6,6 +6,7 @@ using Basket.Domain.Entities;
 using Basket.Domain.Repositories;
 using Discount.Grpc.Protos;
 using Grpc.Core;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Basket.Application.Test;
@@ -15,6 +16,7 @@ public class CommandUnitTests
 {
     private Mock<IBasketRepository> _mockBasketRepository;
     private Mock<DiscountProtoService.DiscountProtoServiceClient> _discountProtoServiceClientMock;
+    private Mock<ILogger<CreateBasketHandler>> _loggerMock;
     private DiscountGrpcService _discountGrpcService;
     private CreateBasketHandler _createBasketHandler;
     private DeleteBasketByUserNameHandler _deleteBasketCommandHandler;
@@ -23,9 +25,10 @@ public class CommandUnitTests
     public void SetUp()
     {
         _mockBasketRepository = new Mock<IBasketRepository>();
+        _loggerMock = new Mock<ILogger<CreateBasketHandler>>();
         _discountProtoServiceClientMock = new Mock<DiscountProtoService.DiscountProtoServiceClient>();
         _discountGrpcService = new DiscountGrpcService(_discountProtoServiceClientMock.Object);
-        _createBasketHandler = new CreateBasketHandler(_mockBasketRepository.Object, _discountGrpcService);
+        _createBasketHandler = new CreateBasketHandler(_mockBasketRepository.Object, _discountGrpcService, _loggerMock.Object);
         _deleteBasketCommandHandler = new DeleteBasketByUserNameHandler(_mockBasketRepository.Object);
     }
 

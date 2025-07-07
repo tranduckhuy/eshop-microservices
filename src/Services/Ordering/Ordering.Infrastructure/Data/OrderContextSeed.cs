@@ -7,6 +7,8 @@ namespace Ordering.Infrastructure.Data
 {
     public class OrderContextSeed
     {
+        protected OrderContextSeed() { }
+
         public static async Task SeedAsync(OrderContext orderContext, ILogger<OrderContextSeed> logger)
         {
             // Create policy to handle exception when seeding data

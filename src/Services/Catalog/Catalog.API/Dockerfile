@@ -13,6 +13,7 @@ COPY ["src/Services/Catalog/Catalog.API/Catalog.API.csproj", "Services/Catalog/C
 COPY ["src/Services/Catalog/Catalog.Application/Catalog.Application.csproj", "Services/Catalog/Catalog.Application/"]
 COPY ["src/Services/Catalog/Catalog.Infrastructure/Catalog.Infrastructure.csproj", "Services/Catalog/Catalog.Infrastructure/"]
 COPY ["src/Services/Catalog/Catalog.Domain/Catalog.Domain.csproj", "Services/Catalog/Catalog.Domain/"]
+COPY ["src/Infrastructures/Common.Logging/Common.Logging.csproj", "src/Infrastructures/Common.Logging/"]
 RUN dotnet restore "Services/Catalog/Catalog.API/Catalog.API.csproj"
 COPY . .
 WORKDIR "/src/src/Services/Catalog/Catalog.API"

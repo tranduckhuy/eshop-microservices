@@ -1,8 +1,10 @@
-﻿using Catalog.API.Controllers;
+﻿using Catalog.API.Controllers.v1;
 using Catalog.Application.Queries;
 using Catalog.Application.Responses;
+using Common.Logging.Correlation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Catalog.API.Test
@@ -10,13 +12,17 @@ namespace Catalog.API.Test
     internal class BrandsControllerTests
     {
         private Mock<IMediator> _mediatorMock;
+        private Mock<ILogger<BrandsController>> _logger;
+        private Mock<ICorrelationIdGenerator> _correlationIdGenerator;
         private BrandsController _controller;
 
         [SetUp]
         public void SetUp()
         {
             _mediatorMock = new Mock<IMediator>();
-            _controller = new BrandsController(_mediatorMock.Object);
+            _logger = new Mock<ILogger<BrandsController>>();
+            _correlationIdGenerator = new Mock<ICorrelationIdGenerator>();
+            _controller = new BrandsController(_mediatorMock.Object, _logger.Object, _correlationIdGenerator.Object);
         }
 
         [Test]

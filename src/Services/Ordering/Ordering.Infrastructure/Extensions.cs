@@ -30,7 +30,7 @@ namespace Ordering.Infrastructure
             });
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(RepositoryBase<>));
-            services.AddTransient<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
             return services;
         }
 

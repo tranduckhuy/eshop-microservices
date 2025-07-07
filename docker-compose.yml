@@ -1,4 +1,7 @@
 services:
+  reverseproxy:
+    image: nginx:alpine
+
   catalogdb:
     image: mongo:4.4.18
 
@@ -9,7 +12,13 @@ services:
     image: postgres
 
   orderdb:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:2019-latest
+
+  identitydb:
+    image: postgres
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
 
   portainer:
     image: portainer/portainer-ce
@@ -38,7 +47,28 @@ services:
       context: .
       dockerfile: src/Services/Ordering/Ordering.API/Dockerfile
 
+  # ocelotapigateway:
+  #   image: ${DOCKER_REGISTRY-}ocelotapigateway
+  #   build:
+  #     context: .
+  #     dockerfile: src/ApiGateways/Ocelot.ApiGateway/Dockerfile
+
+  identityserver:
+    image: ${DOCKER_REGISTRY-}identityserver
+    build:
+      context: .
+      dockerfile: src/Infrastructures/EShop.IdentityServer/Dockerfile
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.0
+
 volumes:
   mongo_data:
   portainer_data:
   postgres_data:
+  sqlserver_data:
+  identity_data:
+  elasticsearch_data:
