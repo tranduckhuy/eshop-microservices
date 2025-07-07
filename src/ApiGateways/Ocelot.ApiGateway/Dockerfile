@@ -10,11 +10,11 @@ COPY ["src/ApiGateways/Ocelot.ApiGateway/Ocelot.ApiGateway.csproj", "src/ApiGate
 RUN dotnet restore "./src/ApiGateways/Ocelot.ApiGateway/Ocelot.ApiGateway.csproj"
 COPY . .
 WORKDIR "/src/src/ApiGateways/Ocelot.ApiGateway"
-RUN dotnet build "./Ocelot.ApiGateway.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./Ocelot.ApiGateway.csproj" -c "$BUILD_CONFIGURATION" -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Ocelot.ApiGateway.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Ocelot.ApiGateway.csproj" -c "$BUILD_CONFIGURATION" -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

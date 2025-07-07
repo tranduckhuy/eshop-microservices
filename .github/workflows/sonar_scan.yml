@@ -54,11 +54,13 @@ jobs:
         run: dotnet restore EShop.sln
 
       - name: Start SonarQube analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
           ./.sonar/scanner/dotnet-sonarscanner begin
           /k:"tranduckhuy_eshop-microservices"
           /o:"tranduckhuy"
-          /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          /d:sonar.login="${SONAR_TOKEN}"
           /d:sonar.host.url="https://sonarcloud.io"
           /d:sonar.cs.opencover.reportsPaths="./**/coverage.opencover.xml"
           /d:sonar.coverage.exclusions="**/Program.cs,**/*Extension*.cs,**/Migrations/**/*.cs,**/*.Test.cs,**/Infrastructure/Data/**/*,**/Validators/**,**/Swagger/**"
@@ -79,4 +81,4 @@ jobs:
       - name: End SonarQube analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+        run: ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.login="${SONAR_TOKEN}"

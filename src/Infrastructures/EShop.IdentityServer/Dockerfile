@@ -13,11 +13,11 @@ COPY ["src/Infrastructures/EShop.IdentityServer/EShop.IdentityServer.csproj", "s
 RUN dotnet restore "./src/Infrastructures/EShop.IdentityServer/EShop.IdentityServer.csproj"
 COPY . .
 WORKDIR "/src/src/Infrastructures/EShop.IdentityServer"
-RUN dotnet build "./EShop.IdentityServer.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./EShop.IdentityServer.csproj" -c "$BUILD_CONFIGURATION" -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./EShop.IdentityServer.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./EShop.IdentityServer.csproj" -c "$BUILD_CONFIGURATION" -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
