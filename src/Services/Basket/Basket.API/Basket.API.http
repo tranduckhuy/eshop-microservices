@@ -1,0 +1,49 @@
+@hostname=localhost
+@port=9001
+
+GET https://{{hostname}}:{{port}}/api/v1/Basket/User/huydz
+Accept: application/json
+
+###
+POST https://{{hostname}}:{{port}}/api/v1/Basket/Checkout/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "userName": "huydz",
+  "totalPrice": 0,
+  "firstName": "Huy",
+  "lastName": "Tran",
+  "email": "duchuy@eshop.com",
+  "addressLine": "Quy Nhon",
+  "country": "Vietnam",
+  "state": "Quy Nhon",
+  "zipCode": "123456",
+  "cardName": "Visa",
+  "cardNumber": "1610200316102003",
+  "expiration": "10/25",
+  "cvv": "123",
+  "paymentMethod": 2
+}
+
+###
+POST https://{{hostname}}:{{port}}/api/v1/Basket/UpdateBasket/
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjlFMTQ4MDgzMUVFQUEzNDlCQkIxREQ2OTkxMjRBRDZEIiwidHlwIjoiYXQrand0In0.eyJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo5MDExIiwibmJmIjoxNzI0OTIwOTkwLCJpYXQiOjE3MjQ5MjA5OTAsImV4cCI6MTcyNDkyNDU5MCwiYXVkIjoiZTdiOWM4YzEtNGMzNi00ZDdiLThkNDMtNGI5YzZkOGE2OGI5Iiwic2NvcGUiOlsiZXNob3BhcGlnYXRld2F5Il0sImNsaWVudF9pZCI6ImIyMWY0ZTZiLTBlNDQtNGQ5Ny04ZjBhLTJiOGQ4YTRmMjljMSIsImp0aSI6IkNDNTAzRkM5QjNEMEU1NEZEMEI3QjUwMTRFNUJGRTgwIn0.t0q2lfxnw2vWACN77SnReWiIHO5sG3otmeJuKhSpMd7ahBoCiJtql8TTCpoIARpytYLN2lzbRknkupPae_svnaYDits6Zm1CXQ9jD8daKCzl_DTGec-untHZiY0J8RKIw4zB6HQVaWluXozwWmGq0SmWJ2Ds97NvHEeXi_oKZokwZG28v_JY6_VkK7V4iitAAjbxQhnF8AJBO4_gRm3akXPHRyf1jpQofEj62uCHJ82xLBlzQ6cnwPkVlSDgMvEPUN1j9LnK5xMT5ncdVuegwaZSSnP5paw-x_rPSD6EnwlhDMWyp5Y1ytqR0BVPEo0UVd01ivw5ayNwBa_HFI0zPA
+
+{
+  "userName": "huydz",
+  "items": [
+    {
+      "productId": "a7b2faca-f5b5-4d74-8ba6-cd7b3b4a85f1",
+      "productName": "Adidas Quick Force Indoor Badminton Shoes",
+      "imageFile": "images/products/adidas_shoe-1.png",
+      "price": 3500,
+      "quantity": 3
+    }
+  ]
+}
+
+
+
