@@ -18,10 +18,16 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: 'zulu'  # Alternative distribution options are available.
+          distribution: "zulu" # Alternative distribution options are available.
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v4
@@ -44,10 +50,35 @@ jobs:
           mkdir -p ./.sonar/scanner
           dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
 
-      - name: Build and analyze
+      - name: Restore dependencies
+        run: dotnet restore EShop.sln
+
+      - name: Start SonarQube analysis
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: >
+          ./.sonar/scanner/dotnet-sonarscanner begin
+          /k:"tranduckhuy_eshop-microservices"
+          /o:"tranduckhuy"
+          /d:sonar.login="${SONAR_TOKEN}"
+          /d:sonar.host.url="https://sonarcloud.io"
+          /d:sonar.cs.opencover.reportsPaths="./**/coverage.opencover.xml"
+          /d:sonar.coverage.exclusions="**/Program.cs,**/*Extension*.cs,**/Migrations/**/*.cs,**/*.Test.cs,**/Infrastructure/Data/**/*,**/Validators/**,**/Swagger/**"
+          /d:sonar.cpd.exclusions="**/Program.cs,**/BaseController.cs,**/Validators/**,**/Migrations/**,**/Swagger/**"
+
+      - name: Build solution
+        run: dotnet build EShop.sln --configuration Debug
+
+      - name: Run tests with coverage
         run: |
-          chmod +x ./.github/workflows/sonar-config.sh
-          ./.github/workflows/sonar-config.sh
+          dotnet test tests/Services/Catalog/Catalog.Application.Test/Catalog.Application.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          dotnet test tests/Services/Catalog/Catalog.Infrastructure.Test/Catalog.Infrastructure.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          dotnet test tests/Services/Catalog/Catalog.API.Test/Catalog.API.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          dotnet test tests/Services/Basket/Basket.Application.Test/Basket.Application.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          dotnet test tests/Services/Basket/Basket.API.Test/Basket.API.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          dotnet test tests/Services/Discount/Discount.Application.Test/Discount.Application.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+
+      - name: End SonarQube analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.login="${SONAR_TOKEN}"
