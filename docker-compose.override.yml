@@ -1,10 +1,10 @@
 services:
-  reverseproxy:
+  nginxgateway:
     container_name: nginxgateway
-    restart: always
+    restart: unless-stopped
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - /etc/nginx/ssl:/etc/nginx/ssl:ro
+      - ./src/ApiGateways/nginx/nginx.conf/:/etc/nginx/nginx.conf:ro
+      - ./src/ApiGateways/nginx/ssl/:/etc/nginx/ssl:ro
     ports:
       - "9010:9010"
     depends_on:
@@ -16,29 +16,31 @@ services:
 
   catalogdb:
     container_name: catalogdb
-    restart: always
+    restart: unless-stopped
     ports:
       - "27017:27017"
     volumes:
-      - mongo_data:/data/db
+      - catalog_data:/data/db
 
   basketdb:
     container_name: basketdb
-    restart: always
+    restart: unless-stopped
     ports:
       - "6379:6379"
+    volumes:
+      - basket_data:/data
 
   discountdb:
     container_name: discountdb
     environment:
       - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD={password}
+      - POSTGRES_PASSWORD=huydz
       - POSTGRES_DB=DiscountDb
-    restart: always
+    restart: unless-stopped
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - discount_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin -d DiscountDb"]
       interval: 30s
@@ -48,20 +50,16 @@ services:
   orderdb:
     container_name: orderdb
     environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD={passwordJC4}
-      - MSSQL_PID=Express
-    restart: always
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=huydz
+      - POSTGRES_DB=OrderDb
+    restart: unless-stopped
     ports:
-      - "1433:1433"
+      - "5433:5432"
     volumes:
-      - sqlserver_data:/var/opt/mssql
+      - order_data:/var/lib/postgresql/data
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "/opt/mssql-tools/bin/sqlcmd -U sa -P {passwordJC4} -Q 'SELECT 1'",
-        ]
+      test: ["CMD-SHELL", "pg_isready -U admin -d OrderDb"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -70,23 +68,28 @@ services:
     container_name: identitydb
     environment:
       - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD={password}
-    restart: always
+      - POSTGRES_PASSWORD=huydz
+    restart: unless-stopped
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       - identity_data:/var/lib/postgresql/data
 
   rabbitmq:
     container_name: rabbitmq
-    restart: always
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=huydz
     ports:
       - "5672:5672"
       - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 
   portainer:
     container_name: portainer
-    restart: always
+    restart: unless-stopped
     ports:
       - "8080:8000"
       - "9090:9000"
@@ -96,6 +99,7 @@ services:
 
   catalog.api:
     container_name: catalog.api
+    restart: unless-stopped
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings__ConnectionString=mongodb://catalogdb:27017"
@@ -104,49 +108,54 @@ services:
       - "DatabaseSettings__BrandsCollection=Brands"
       - "DatabaseSettings__TypesCollection=Categories"
       - "ElasticConfiguration__Uri=http://elasticsearch:9200"
+      - Authentication__Authority=http://identityserver:8080
+      - Authentication__PublicAuthority=https://id-local.eshop.com:9010
+      - Authentication__Audience=9fc33c2e-dbc1-4d0a-b212-68b9e07b3ba0
+      - Authentication__Issuer=https://id-local.eshop.com:9010
     depends_on:
       - catalogdb
-    ports:
-      - "9000:8080"
+      - elasticsearch
 
   basket.api:
     container_name: basket.api
+    restart: unless-stopped
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "RedisSettings__ConnectionString=basketdb:6379"
       - "GrpcSettings__DiscountUrl=http://discount.api:8080"
-      - "EventBusSettings__HostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "EventBusSettings__HostAddress=amqp://admin:huydz@rabbitmq:5672"
       - "ElasticConfiguration__Uri=http://elasticsearch:9200"
+      - Authentication__Authority=https://id-local.eshop.com:9010
+      - Authentication__Audience=89d1690f-7d79-4a3e-a9b4-8d680ce0efc1
+      - Authentication__Issuer=https://id-local.eshop.com:9010
     depends_on:
       - basketdb
       - discount.api
-    ports:
-      - "9001:8080"
+      - rabbitmq
+      - elasticsearch
 
   discount.api:
     container_name: discount.api
+    restart: unless-stopped
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - "DatabaseSettings__ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;Username=admin;Password={password}"
+      - "DatabaseSettings__ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;Username=admin;Password=huydz"
       - "ElasticConfiguration__Uri=http://elasticsearch:9200"
     depends_on:
-      discountdb:
-        condition: service_healthy
-    ports:
-      - "9002:8080"
+      - discountdb
+      - elasticsearch
 
   ordering.api:
     container_name: ordering.api
+    restart: unless-stopped
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - "ConnectionStrings__OrderingConnectionString=Server=orderdb;Database=OrderDb;User Id=sa;Password={passwordJC4};TrustServerCertificate=True;"
-      - "EventBusSettings__HostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "ConnectionStrings__OrderingConnectionString=Server=orderdb;Port=5432;Database=OrderDb;Username=admin;Password=huydz"
+      - "EventBusSettings__HostAddress=amqp://admin:huydz@rabbitmq:5672"
       - "ElasticConfiguration__Uri=http://elasticsearch:9200"
     depends_on:
       orderdb:
         condition: service_healthy
-    ports:
-      - "9003:8080"
 
   # ocelotapigateway:
   #   container_name: ocelotapigateway
@@ -163,17 +172,17 @@ services:
 
   identityserver:
     container_name: identityserver
+    restart: unless-stopped
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - "ConnectionStrings__Identity=Server=identitydb;Port=5433;Database=identity;Username=admin;Password={password}"
-      - "ConnectionStrings__IdentityServer=Server=identitydb;Port=5433;Database=identityserver;Username=admin;Password={password}"
+      - "ConnectionStrings__Identity=Server=identitydb;Port=5432;Database=IdentityDb;Username=admin;Password=huydz"
+      - "ConnectionStrings__IdentityServer=Server=identitydb;Port=5432;Database=IdentityServerDb;Username=admin;Password=huydz"
     depends_on:
       - identitydb
-    ports:
-      - "9011:8080"
 
   elasticsearch:
     container_name: elasticsearch
+    restart: unless-stopped
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - "discovery.type=single-node"
@@ -185,6 +194,7 @@ services:
 
   kibana:
     container_name: kibana
+    restart: unless-stopped
     environment:
       - "ELASTICSEARCH_URL=http://elasticsearch:9200"
     ports:

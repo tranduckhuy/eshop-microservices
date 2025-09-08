@@ -36,19 +36,9 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - name: Cache SonarCloud scanner
-        id: cache-sonar-scanner
-        uses: actions/cache@v4
-        with:
-          path: ./.sonar/scanner
-          key: ${{ runner.os }}-sonar-scanner
-          restore-keys: ${{ runner.os }}-sonar-scanner
-
       - name: Install SonarCloud scanner
-        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         run: |
-          mkdir -p ./.sonar/scanner
-          dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
+          dotnet tool install --global dotnet-sonarscanner
 
       - name: Restore dependencies
         run: dotnet restore EShop.sln
@@ -56,29 +46,29 @@ jobs:
       - name: Start SonarQube analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: >
-          ./.sonar/scanner/dotnet-sonarscanner begin
-          /k:"tranduckhuy_eshop-microservices"
-          /o:"tranduckhuy"
-          /d:sonar.login="${SONAR_TOKEN}"
-          /d:sonar.host.url="https://sonarcloud.io"
-          /d:sonar.cs.opencover.reportsPaths="./**/coverage.opencover.xml"
-          /d:sonar.coverage.exclusions="**/Program.cs,**/*Extension*.cs,**/Migrations/**/*.cs,**/*.Test.cs,**/Infrastructure/Data/**/*,**/Validators/**,**/Swagger/**"
-          /d:sonar.cpd.exclusions="**/Program.cs,**/BaseController.cs,**/Validators/**,**/Migrations/**,**/Swagger/**"
+        run: |
+          dotnet sonarscanner begin \
+            /k:"tranduckhuy_eshop-microservices" \
+            /o:"tranduckhuy" \
+            /d:sonar.token="${SONAR_TOKEN}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.opencover.reportsPaths="./**/coverage.opencover.xml" \
+            /d:sonar.coverage.exclusions="**/Program.cs,**/*Extension*.cs,**/Migrations/**/*.cs,**/*.Test.cs,**/Infrastructure/Data/**/*,**/Validators/**,**/Swagger/**" \
+            /d:sonar.cpd.exclusions="**/Program.cs,**/BaseController.cs,**/Validators/**,**/Migrations/**,**/Swagger/**"
 
       - name: Build solution
         run: dotnet build EShop.sln --configuration Debug
 
       - name: Run tests with coverage
         run: |
-          dotnet test tests/Services/Catalog/Catalog.Application.Test/Catalog.Application.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-          dotnet test tests/Services/Catalog/Catalog.Infrastructure.Test/Catalog.Infrastructure.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-          dotnet test tests/Services/Catalog/Catalog.API.Test/Catalog.API.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-          dotnet test tests/Services/Basket/Basket.Application.Test/Basket.Application.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-          dotnet test tests/Services/Basket/Basket.API.Test/Basket.API.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-          dotnet test tests/Services/Discount/Discount.Application.Test/Discount.Application.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          rm -f coverage.*.xml coverage.json
+
+          dotnet test EShop.sln --no-build --logger "trx;LogFileName=test_results.trx" \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=opencover \
+            /p:CoverletOutput=./coverage.opencover.xml
 
       - name: End SonarQube analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.login="${SONAR_TOKEN}"
+        run: dotnet sonarscanner end /d:sonar.token="${SONAR_TOKEN}"

@@ -24,7 +24,10 @@ namespace EShop.IdentityServer
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddIdentityServer()
+            services.AddIdentityServer(options =>
+            {
+                options.IssuerUri = "https://id-local.eshop.com:9010";
+            })
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddConfigurationStore(configurationStoreOptions =>
                 {

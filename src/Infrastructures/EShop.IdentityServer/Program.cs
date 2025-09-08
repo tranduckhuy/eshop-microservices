@@ -13,6 +13,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEShopIdentityServer();
 builder.Services.AddRazorPages();
 
+// Cors
+builder.Services.AddCors(corsOptions =>
+{
+    corsOptions.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 var forwardHeaders = new ForwardedHeadersOptions
@@ -28,7 +37,10 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
+
 app.UseRouting();
+
+app.UseCors("CorsPolicy");
 
 app.UseIdentityServer();
 

@@ -49,6 +49,8 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.IgnoreObsoleteActions();
     c.IgnoreObsoleteProperties();
+
+    c.AddServer(new Microsoft.OpenApi.Models.OpenApiServer { Url = "/ordering" });
 });
 
 builder.Services.AddMassTransit(config =>
@@ -78,9 +80,11 @@ if (app.Environment.IsDevelopment())
         var descriptions = app.DescribeApiVersions();
 
         foreach (var description in descriptions)
-            opt.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Order API {description.GroupName.ToLowerInvariant()}");
+            opt.SwaggerEndpoint($"/ordering/swagger/{description.GroupName}/swagger.json", $"Order API {description.GroupName.ToLowerInvariant()}");
     });
 }
+
+await app.Services.MigrateDatabaseAsync();
 
 app.UseHttpsRedirection();
 
@@ -93,8 +97,5 @@ app.MapHealthChecks("/health", new HealthCheckOptions()
     Predicate = _ => true,
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
-
-// Seed data for the first time
-await app.Services.SeedDataAsync();
 
 await app.RunAsync();
