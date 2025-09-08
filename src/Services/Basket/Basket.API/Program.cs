@@ -9,6 +9,7 @@ using HealthChecks.UI.Client;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -78,6 +79,8 @@ builder.Services.AddSwaggerGen(swaggerGenOptions =>
             }
         });
 
+    swaggerGenOptions.AddServer(new OpenApiServer { Url = "/basket" });
+
     swaggerGenOptions.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -102,6 +105,15 @@ builder.Services.AddMassTransit(config =>
 
 var app = builder.Build();
 
+var forwardHeaders = new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+};
+
+forwardHeaders.KnownNetworks.Clear();
+forwardHeaders.KnownProxies.Clear();
+app.UseForwardedHeaders(forwardHeaders);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -112,13 +124,13 @@ if (app.Environment.IsDevelopment())
         var descriptions = app.DescribeApiVersions();
 
         foreach (var description in descriptions)
-            opt.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Basket API {description.GroupName.ToLowerInvariant()}");
+            opt.SwaggerEndpoint($"/basket/swagger/{description.GroupName}/swagger.json", $"Basket API {description.GroupName.ToLowerInvariant()}");
     });
 }
 
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

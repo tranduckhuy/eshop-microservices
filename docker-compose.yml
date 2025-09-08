@@ -1,27 +1,27 @@
 services:
-  reverseproxy:
-    image: nginx:alpine
+  nginxgateway:
+    image: nginx:1.29-alpine
 
   catalogdb:
     image: mongo:4.4.18
 
   basketdb:
-    image: redis:alpine
+    image: redis:alpine3.21
 
   discountdb:
-    image: postgres
+    image: postgres:13.21-alpine3.22
 
   orderdb:
-    image: mcr.microsoft.com/mssql/server:2019-latest
+    image: postgres:13.21-alpine3.22
 
   identitydb:
-    image: postgres
+    image: postgres:13.21-alpine3.22
 
   rabbitmq:
-    image: rabbitmq:3-management-alpine
+    image: rabbitmq:3.13.7-management-alpine
 
   portainer:
-    image: portainer/portainer-ce
+    image: portainer/portainer-ce:2.25.1-alpine
 
   catalog.api:
     image: ${DOCKER_REGISTRY-}catalogapi
@@ -60,15 +60,17 @@ services:
       dockerfile: src/Infrastructures/EShop.IdentityServer/Dockerfile
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.1.2
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:8.15.0
+    image: docker.elastic.co/kibana/kibana:9.1.2
 
 volumes:
-  mongo_data:
+  catalog_data:
+  basket_data:
   portainer_data:
-  postgres_data:
-  sqlserver_data:
+  discount_data:
+  order_data:
   identity_data:
+  rabbitmq_data:
   elasticsearch_data:

@@ -71,12 +71,12 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          dotnet test tests/Services/Catalog/Catalog.Application.Test/Catalog.Application.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-          dotnet test tests/Services/Catalog/Catalog.Infrastructure.Test/Catalog.Infrastructure.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-          dotnet test tests/Services/Catalog/Catalog.API.Test/Catalog.API.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-          dotnet test tests/Services/Basket/Basket.Application.Test/Basket.Application.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-          dotnet test tests/Services/Basket/Basket.API.Test/Basket.API.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-          dotnet test tests/Services/Discount/Discount.Application.Test/Discount.Application.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          rm -f coverage.*.xml coverage.json
+
+          dotnet test EShop.sln --no-build --logger "trx;LogFileName=test_results.trx" \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=opencover \
+            /p:CoverletOutput=./coverage.opencover.xml
 
       - name: End SonarQube analysis
         env:

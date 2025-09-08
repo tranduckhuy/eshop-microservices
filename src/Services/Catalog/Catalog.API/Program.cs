@@ -8,6 +8,8 @@ using Common.Logging.Correlation;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -40,9 +42,39 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         jwtBearerOptions.Authority = builder.Configuration["Authentication:Authority"];
         jwtBearerOptions.Audience = builder.Configuration["Authentication:Audience"];
 
+        // Check development only
+        if (builder.Environment.IsDevelopment())
+        {
+            jwtBearerOptions.RequireHttpsMetadata = false;
+            jwtBearerOptions.TokenValidationParameters.ValidIssuer = builder.Configuration["Authentication:Issuer"];
+        }
+
         jwtBearerOptions.TokenValidationParameters.ValidateAudience = true;
         jwtBearerOptions.TokenValidationParameters.ValidateIssuer = true;
         jwtBearerOptions.TokenValidationParameters.ValidateIssuerSigningKey = true;
+
+        jwtBearerOptions.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogError("Authentication failed: {Message}", context.Exception.Message);
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogInformation("Token validated for {User}", context.Principal?.Identity?.Name);
+                return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogWarning("OnChallenge error: {Error}, description: {ErrorDescription}",
+                    context.Error, context.ErrorDescription);
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorizationBuilder()
@@ -84,11 +116,13 @@ builder.Services.AddSwaggerGen(swaggerGenOptions =>
                 ClientCredentials = new OpenApiOAuthFlow
                 {
                     TokenUrl =
-                        new Uri($"{builder.Configuration["Authentication:Authority"]}/connect/token"),
+                        new Uri($"{builder.Configuration["Authentication:PublicAuthority"]}/connect/token"),
                     Scopes = { { "catalogapi", "Catalog.API" } }
                 }
             }
         });
+
+    swaggerGenOptions.AddServer(new OpenApiServer { Url = "/catalog" });
 
     swaggerGenOptions.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
@@ -104,6 +138,15 @@ builder.Services.AddSwaggerGen(swaggerGenOptions =>
 
 var app = builder.Build();
 
+var forwardHeaders = new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+};
+
+forwardHeaders.KnownNetworks.Clear();
+forwardHeaders.KnownProxies.Clear();
+app.UseForwardedHeaders(forwardHeaders);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -114,12 +157,12 @@ if (app.Environment.IsDevelopment())
         var descriptions = app.DescribeApiVersions();
 
         foreach (var description in descriptions)
-            opt.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Catalog API {description.GroupName.ToLowerInvariant()}");
+            opt.SwaggerEndpoint($"/catalog/swagger/{description.GroupName}/swagger.json", $"Catalog API {description.GroupName.ToLowerInvariant()}");
     });
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

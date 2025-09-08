@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Ordering.Domain.Entities;
 using Ordering.Domain.Repositories;
 using Ordering.Infrastructure.Data;
 using Ordering.Infrastructure.Repositories;
@@ -20,12 +21,12 @@ namespace Ordering.Infrastructure
 
             services.AddDbContext<OrderContext>(options =>
             {
-                options.UseSqlServer(connectionString, sqlServerOptions =>
+                options.UseNpgsql(connectionString, sqlServerOptions =>
                 {
                     sqlServerOptions.EnableRetryOnFailure(
                         maxRetryCount: 5,
                         maxRetryDelay: TimeSpan.FromSeconds(10),
-                        errorNumbersToAdd: null);
+                        errorCodesToAdd: null);
                 });
             });
 
@@ -34,19 +35,52 @@ namespace Ordering.Infrastructure
             return services;
         }
 
-        public static async Task SeedDataAsync(this IServiceProvider services)
+        public static async Task SeedDataAsync(IServiceProvider services, OrderContext context)
+        {
+            if (!await context.Orders.AnyAsync())
+            {
+                context.Orders.Add(
+                    new()
+                    {
+                        UserName = "huydz",
+                        FirstName = "Huy",
+                        LastName = "Tran",
+                        Email = "duchuy@eshop.com",
+                        AddressLine = "Quy Nhon",
+                        Country = "Vietnam",
+                        TotalPrice = 1610,
+                        State = "Quy Nhon",
+                        ZipCode = "123456",
+
+                        CardName = "Mastercard",
+                        CardNumber = "1610200316102003",
+                        CreatedBy = "Huy",
+                        Expiration = "12/25",
+                        CVV = "123",
+                        PaymentMethod = PaymentMethod.CreditCard,
+                        LastModifiedBy = "Huy",
+                        LastModifiedDate = DateTime.MinValue,
+                    }
+                );
+            }
+        }
+
+        public static async Task MigrateDatabaseAsync(this IServiceProvider services)
         {
             using var scope = services.CreateScope();
             var scopedServices = scope.ServiceProvider;
-            var logger = scopedServices.GetRequiredService<ILogger<OrderContextSeed>>();
+            var logger = scopedServices.GetRequiredService<ILogger<OrderContext>>();
             try
             {
                 var context = scopedServices.GetRequiredService<OrderContext>();
-                await OrderContextSeed.SeedAsync(context, logger);
+                await context.Database.MigrateAsync();
+                logger.LogInformation("Migrated database associated with context {DbContextName}", nameof(OrderContext));
+
+                await SeedDataAsync(scopedServices, context);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "An error occurred seeding the DB.");
+                logger.LogError(ex, "An error occurred migrating the database used on context {DbContextName}", nameof(OrderContext));
             }
         }
     }
